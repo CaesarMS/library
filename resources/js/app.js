@@ -1,32 +1,38 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
 require('./bootstrap');
+global.jQuery = require('jquery');
+var $ = global.jQuery;
+window.$ = $;
 
 window.Vue = require('vue');
+ 
+import VueRouter from 'vue-router';
+import VueAxios from 'vue-axios';
+import axios from 'axios';
+import mouseMenu from 'vue-mouse-menu';
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
+Vue.config.productionTip = false;
 
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+import Member from './components/Member.vue';
+import Home from './components/Home.vue';
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+import LibraryIndex from './components/LibraryIndex.vue';
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+Vue.use(VueRouter);
+Vue.use(VueAxios, axios);
+Vue.use(mouseMenu);
+ 
+const routes = [
+    {
+        name: 'home',
+        path: '/',
+        component: LibraryIndex
+    }
+];
 
-const app = new Vue({
+const member = new Vue({
     el: '#app',
-});
+    render: h => h(Member)
+})
+
+const router = new VueRouter({ mode: 'history', routes: routes});
+const app = new Vue(Vue.util.extend({ router }, Home)).$mount('#app-two');
