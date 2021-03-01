@@ -13,7 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::resource('member', 'LoginController');
-Route::get('', function () {
+// Route::resource('member', 'LoginController');
+// Route::get('', function () {
+//     return view('base');
+// });
+
+Route::get('/{any}', function () {
     return view('base');
-});
+})->where('any', '.*'); 

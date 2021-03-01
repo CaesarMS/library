@@ -20,7 +20,7 @@
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{{ asset('login/vendor/animsition/css/animsition.min.css') }}">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{{ asset('login/vendor/select2/select2.min.css') }}">
+	<!-- <link rel="stylesheet" type="text/css" href="{{ asset('login/vendor/select2/select2.min.css') }}"> -->
 <!--===============================================================================================-->	
 	<link rel="stylesheet" type="text/css" href="{{ asset('login/vendor/daterangepicker/daterangepicker.css') }}">
 <!--===============================================================================================-->
@@ -43,7 +43,7 @@
 	<script src="{{ asset('login/vendor/bootstrap/js/popper.js') }}"></script>
 	<script src="{{ asset('login/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
 <!--===============================================================================================-->
-	<script src="{{ asset('login/cvendor/select2/select2.min.js') }}"></script>
+	<!-- <script src="{{ asset('login/cvendor/select2/select2.min.js') }}"></script> -->
 <!--===============================================================================================-->
 	<script src="{{ asset('login/vendor/daterangepicker/moment.min.js') }}"></script>
 	<script src="{{ asset('login/vendor/daterangepicker/daterangepicker.js') }}"></script>

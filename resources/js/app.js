@@ -11,6 +11,8 @@ import axios from 'axios';
 
 Vue.config.productionTip = false;
 
+import Vessel from './components/Vessel.vue';
+
 import Member from './components/Member.vue';
 import Home from './components/Home.vue';
 
@@ -19,15 +21,15 @@ Vue.use(VueAxios, axios);
  
 const routes = [
     {
+        name: 'member',
+        path: '/member',
+        component: Member
+    },{
         name: 'home',
-        path: '/'
+        path: '/',
+        component: Home
     }
 ];
 
-const member = new Vue({
-    el: '#app',
-    render: h => h(Member)
-})
-
 const router = new VueRouter({ mode: 'history', routes: routes});
-const app = new Vue(Vue.util.extend({ router }, Home)).$mount('#app-two');
+const app = new Vue(Vue.util.extend({ router }, Vessel)).$mount('#app');
