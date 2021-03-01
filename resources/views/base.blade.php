@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link href="{{ asset('css/bstreeview.min.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/lightgallery/1.3.9/css/lightgallery.min.css" rel="stylesheet">
-    <!-- <link href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap4.min.css" rel="stylesheet"> -->
     
   
 
@@ -21,8 +20,6 @@
     </div>
 
   <script src="{{ asset('login/vendor/jquery/jquery-3.2.1.min.js') }}"></script>
-  <!-- <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js"></script> -->
   <script src="{{ asset('js/app.js') }}"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
   <script src="{{ asset('login/vendor/bootstrap/js/popper.js') }}"></script>

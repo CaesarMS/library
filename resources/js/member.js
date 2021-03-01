@@ -12,22 +12,12 @@ import axios from 'axios';
 Vue.config.productionTip = false;
 
 import Member from './components/Member.vue';
-import Home from './components/Home.vue';
 
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
  
-const routes = [
-    {
-        name: 'home',
-        path: '/'
-    }
-];
 
 const member = new Vue({
     el: '#app',
     render: h => h(Member)
-})
-
-const router = new VueRouter({ mode: 'history', routes: routes});
-const app = new Vue(Vue.util.extend({ router }, Home)).$mount('#app-two');
+});

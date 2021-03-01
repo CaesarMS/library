@@ -25,7 +25,6 @@
     },
     "dependencies": {
         "vue-axios": "^3.2.4",
-        "vue-mouse-menu": "^2.1.2",
         "vue-router": "^3.5.1"
     }
 }

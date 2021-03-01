@@ -14,7 +14,7 @@
         <div id="content">
             <nav :class="{sidebarShadow: showFilter ? true : false }"> </nav>
             <div id="topNav">
-                <form method="get" id="search">
+                <form method="" id="search" class="pt-1">
                     <input name="q" type="text" size="40" placeholder="Search solution..." />
                 </form>
             </div>
@@ -61,7 +61,58 @@
                     </div>
                 </label>    
                 <div id="filter">
-                    
+                    <form method="" style="margin-top: 10vh; margin-left: 30px;" >
+                        <div class="rowM">
+                            <div class="columnM mr-2">
+                                <div><label for="" style="color: #000000; font-weight: bold;">Document Type</label></div>
+                                <select style="width: 250px;" class="filterForm">
+                                    <option value="">Manual, procedure, project, etc.</option>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="columnM mr-2">
+                                <div><label for="" style="color: #000000; font-weight: bold;">Format</label></div>
+                                <select style="width: 250px;" class="filterForm">
+                                    <option value="">pdf, doc, or xls</option>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="columnM mr-2">
+                                <div><label for="" style="color: #000000; font-weight: bold;">Author</label></div>
+                                <select style="width: 250px;" class="filterForm">
+                                    <option value="">-</option>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="columnM mr-2">
+                                <div><label for="" style="color: #000000; font-weight: bold;">Department</label></div>
+                                <select style="width: 250px;" class="filterForm">
+                                    <option value="">Select Department</option>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="rowM">
+                            <div class="columnM mr-2">
+                                <div><label for="" style="color: #000000; font-weight: bold;">Select Category</label></div>
+                                <select style="width: 250px;" class="filterForm">
+                                    <option value="">Select Category</option>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="columnM mr-2">
+                                <div><label for="" style="color: #000000; font-weight: bold;">File Status</label></div>
+                                <select style="width: 250px;" class="filterForm">
+                                    <option value="">Draft, published, authorized, etc.</option>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="columnM mt-2">
+                                <button @click="show()" type="button" class="btnX mt-4 mr-2" style="width: 80px; background-color: #1890FF; color: #FFFFFF;"><i class="fa fa-times mr-2"></i>Close</button>
+                                <button type="button" class="btnX mt-4" style="width: 120px; background-color: #FAFAFA; color: #1890FF"><i class="fa fa-history mr-2"></i>Reset Filter</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div ref="box" :class="{showDetails:showDetails,hideDetails:hideDetails,showFilter:showFilter,hideFilter:hideFilter}" class="demo-gallery" @click="clear()" @contextmenu="clear()">
                     <div class="move" :style="{top:topM, left:leftM}" ref="hehe" v-if="xx">
@@ -93,65 +144,14 @@
                     </ul>
                     
                     <h5 style="margin-top: 6vh; position: absolute;">Recent Files</h5>
-                    <ul id="lightgallery" class="list-unstyled row">
-                        <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center">
-                            <a href="#">
-                                <img class="img-responsive" src="img/docs.png">
-                                <span>Agreement...</span>
-                            </a>
-                        </li>
-                        <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center">
-                            <a href="#">
-                                <img class="img-responsive" src="img/docs.png">
-                                <span>Manuscript</span>
-                            </a>
-                        </li>
-                        <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center">
-                            <a href="#">
-                                <img class="img-responsive" src="img/etc.png">
-                                <div><span>Plan A</span></div>
-                            </a>
-                        </li>
-                        <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center">
-                            <a href="#">
-                                <img class="img-responsive" src="img/etc.png">
-                                <div><span>Plan B</span></div>
-                            </a>
-                        </li>
-                        <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center">
-                            <a href="#">
-                                <img class="img-responsive" src="img/xd.png">
-                                <div><span>Mockups</span></div>
-                            </a>
-                        </li>
-                        <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center">
-                            <a href="#">
-                                <img class="img-responsive" src="img/ae.png">
-                                <div><span>Prototypes</span></div>
-                            </a>
-                        </li>
-                        <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center">
-                            <a href="#">
-                                <img class="img-responsive" src="img/docs.png">
-                                <div><span>Sitemap</span></div>
-                            </a>
-                        </li>
-                        <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center">
-                            <a href="#">
-                                <img class="img-responsive" src="img/form.png">
-                                <div><span>Surveys</span></div>
-                            </a>
-                        </li>
-                        <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center">
-                            <a href="#">
-                                <img class="img-responsive" src="img/xls.png">
-                                <div><span>Research Re...</span></div>
-                            </a>
-                        </li>
-                        <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center">
-                            <a href="#">
-                                <img class="img-responsive" src="img/docs.png">
-                                <div><span>Redesign W...</span></div>
+                    <ul id="lightgallery" class="list-unstyled row" v-if="contentLoaded">
+                        <li v-for="(file, index) in getFiles" :key="index" class="col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center">
+                            <a href="" @click.stop.prevent="getDetails(file.id)" :class="active(file.id)" :draggable="true"
+                            @dragstart="startDrag($event, file.id)" @contextmenu.stop="openMenu($event, file.id)" @dragend="stopDrag()" @drag="dragging($event)">
+                                <img class="img-responsive" :src="getImg(file.id)">
+                                <div>
+                                    <span :draggable="true" @dragstart="startDrag($event, folder.id)" @drag="dragging($event)">{{ file.file.length>10 ? file.file.slice(0, 10).concat('...') : file.file }}</span>
+                                </div>
                             </a>
                         </li>
                     </ul>
@@ -159,10 +159,8 @@
                     <h5 style="position: absolute;">Folders</h5>
                     <ul style="margin-top: 4vh;" class="list-unstyled row" v-if="contentLoaded">
                         <li v-for="(folder, index) in getFolders" :key="index" class="col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center">
-                            <a href="" @click.stop.prevent="getDetails(folder.id)" :class="active(folder.id)" :draggable="folder.type == 'file' ? true : false"
-                            @dragstart="folder.type == 'file' ? startDrag($event, folder.id) : ''" @drop="folder.type == 'folder' ? onDrop($event, folder.file) : ''"
-                            @dragover="folder.type == 'folder' ? $event.preventDefault() : ''" @dragenter="folder.type == 'folder' ? $event.preventDefault() : ''"
-                            @contextmenu.stop="openMenu($event, folder.id)" @dragend="stopDrag()" @drag="dragging($event)">
+                            <a href="" @click.stop.prevent="getDetails(folder.id)" :class="active(folder.id)" :draggable="false" @drop="onDrop($event, folder.file)"
+                            @dragover="$event.preventDefault()" @dragenter="$event.preventDefault()" @contextmenu.stop="openMenu($event, folder.id)" @dragend="stopDrag()" @drag="dragging($event)">
                                 <img class="img-responsive" :src="getImg(folder.id)" :draggable="folder.type == 'file' ? true : false" @dragstart="folder.type == 'file' ? startDrag($event, folder.id) : ''" @drag="dragging($event)">
                                 <div>
                                     <span :draggable="folder.type == 'file' ? true : false" @dragstart="folder.type == 'file' ? startDrag($event, folder.id) : ''" @drag="dragging($event)">{{ folder.file.length>10 ? folder.file.slice(0, 10).concat('...') : folder.file }}</span>
@@ -183,10 +181,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(file, index) in getFiles" :key="index" @click.stop.prevent="getDetails(file.id)" :class="active(file.id)" @contextmenu.stop="openMenu($event, file.id)"
-                            :draggable="file.type == 'file' ? true : false" @dragstart="file.type == 'file' ? startDrag($event, file.id) : ''"
-                            @drop="file.type == 'folder' ? onDrop($event, file.file) : ''" @dragover="file.type == 'folder' ? $event.preventDefault() : ''"
-                            @dragenter="file.type == 'folder' ? $event.preventDefault() : ''" @dragend="stopDrag()" @drag="dragging($event)">
+                            <tr v-for="(file, index) in getFiles" :key="index" @click.stop.prevent="getDetails(file.id)" :class="active(file.id)" :draggable="true"
+                            @dragstart="startDrag($event, file.id)" @contextmenu.stop="openMenu($event, file.id)" @dragend="stopDrag()" @drag="dragging($event)">
                                 <td><img class="mr-2" :src="getImg(file.id)" style="width: 30px;">{{file.file}}</td>
                                 <td>{{ file.doc_no }}</td>
                                 <td>{{file.size}}</td>
@@ -501,6 +497,11 @@
                 this.alert = true;
                 this.fileToMove = '';
                 this.pictToMove = '';
+                this.file = false;
+                this.thing = true;
+                this.folder = false;
+                this.showDetails = false;
+                this.hideDetails = true;
             },
             dragging: function(evt){
                 this.xx = true;
@@ -646,6 +647,12 @@
 </script>
 
 <style>
+.filterForm{
+    color: #BBBBBB;
+    border-radius: 5px;
+    height: 40px;
+    border: none;
+}
 #sidebar {
     z-index: 2;
 }
@@ -654,11 +661,19 @@
     position: absolute;
     min-width: 250px;
     max-width: 250px;
-    height: 114vh;
+    height: 122vh;
     background: #FAFAFA;
     left: 0;
     bottom: 0;
     top: 6vh;
+}
+.btnX{
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+}
+.btnX:focus{
+    outline: none;
 }
 .btn{
     width: 100px;
@@ -669,6 +684,7 @@
     font-weight: bold;
 }
 #search input[type="text"] {
+    border: none;
     margin-top: 1vh;
     margin-left: 2vh;
     background: url('/img/search.png') no-repeat 10px 6px #FFFFFF;
@@ -689,8 +705,9 @@
     }
 
 #search input[type="text"]:focus {
+    outline: none;
     width: 500px;
-    }
+}
 .demo-gallery ul > li > a {
     max-width: 80px;
     min-width: 80px;
@@ -752,8 +769,8 @@ p{
     #filter{
         z-index: 1;
         left: 250px;
-        max-height: 20vh;
-        min-height: 20vh;
+        max-height: 350px;
+        min-height: 350px;
         right: 0;
         background-color: #E7F3FF;
         color: #4A4A4A;
@@ -768,7 +785,7 @@ p{
         min-width: 300px;
         background: #E7F3FF;
         position: absolute;
-        height: 20vh;
+        height: 350px;
     }
 
 .fa-li {
@@ -785,6 +802,7 @@ p{
     position: absolute;
     width: 250px;
     z-index: 999999999999999;
+    outline: none;
 }
 
 #right-click-menu li {
@@ -827,7 +845,7 @@ p{
     color: #1890FF;
 }
 .showFilter{
-    top: 26vh !important;
+    top: 345px !important;
 }
 .hideFilter{
     top: 6vh !important;
