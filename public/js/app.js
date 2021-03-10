@@ -2130,14 +2130,200 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      lParent: [],
+      lChild: [[], []],
+      over: false,
       folderMove: '',
       componentLoaded: false,
       contentLoaded: false,
       fileContent: null,
-      children: [],
       content: null,
       name: '',
       createFolder: '',
@@ -2172,26 +2358,6 @@ __webpack_require__.r(__webpack_exports__);
     this.getLibrary;
     this.getContent;
   },
-  mounted: function mounted() {// window.addEventListener('mouseup', this.stopDrag);
-  },
-  beforeUpdate: function beforeUpdate() {
-    var $vm = this;
-    $(function () {
-      var json;
-      console.log('xx = ', json = $vm.children);
-      console.log('arow = ', $vm.aRow);
-      console.log('bool = ', $vm.componentLoaded);
-      console.log('c2 = ', $vm.content);
-      console.log('content = ', $vm.fileContent);
-      $('#tree').bstreeview({
-        data: JSON.stringify(json),
-        xpandIcon: 'fa fa-angle-down',
-        collapseIcon: 'fa fa-angle-right'
-      });
-    }); // $(document).ready(function() {
-    //     $('#example').DataTable();
-    // } );
-  },
   computed: {
     getFiles: function getFiles() {
       return this.content.filter(function (u) {
@@ -2205,57 +2371,21 @@ __webpack_require__.r(__webpack_exports__);
     },
     getLibrary: function getLibrary() {
       var self = this;
-      var child;
-      self.children.push.apply(self.children, [{
-        text: "Ahyar Ahfal Imanudin",
-        icon: "fa fa-user",
-        nodes: [{
-          text: "Profile",
-          icon: "fa fa-id-card",
-          click: "www.google.com"
-        }]
-      }, {
-        text: "Document Generator",
-        icon: "fa fa-object-group"
-      }, {
-        text: "Library",
-        icon: "fa fa-folder"
-      }, {
-        text: "Workflow",
-        icon: "fa fa-exchange"
-      }, {
-        text: "Help",
-        icon: "fa fa-info-circle"
-      }, {
-        text: "Audit Trail",
-        icon: "fa fa-list-ol"
-      }, {
-        text: "Changelog",
-        icon: "fa fa-history",
-        href: "www.google.com"
-      }]);
-      self.children[2].nodes = [];
       axios.get("/folder_tree_left_side_bar.json").then(function (response) {
         self.fileContent = response.data;
 
         for (var i = 0; i < self.fileContent.length; i++) {
-          child = {
-            text: self.fileContent[i].text,
-            icon: "fa fa-folder"
-          };
+          self.lParent.push({
+            'active': false
+          });
 
           if (self.fileContent[i].children.length > 0) {
-            child.nodes = [];
-
             for (var j = 0; j < self.fileContent[i].children.length; j++) {
-              child.nodes.push({
-                text: self.fileContent[i].children[j].text,
-                icon: "fa fa-folder"
+              self.lChild[i].push({
+                'active': false
               });
             }
           }
-
-          self.children[2].nodes.push(child);
         }
       }).then(function () {
         self.componentLoaded = true;
@@ -2280,17 +2410,90 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       }).then(function () {
-        self.contentLoaded = true; // console.log(self.content);
+        self.contentLoaded = true;
       })["catch"](function (err) {
         console.log(err.response);
       });
     }
   },
   methods: {
+    activeLib: function activeLib(index, id) {
+      return {
+        caret: id === -1 ? true : false,
+        over: id >= 0 ? this.lChild[index][id].active : this.lParent[index].active
+      };
+    },
+    enterLib: function enterLib(e, index, id) {
+      e.preventDefault();
+      var temp = 0;
+      this.fileContent.forEach(function (fc, ix) {
+        if (fc.children.length > 0) {
+          temp = ix;
+        }
+      });
+      this.aRow.forEach(function (fls) {
+        fls.row = false;
+      });
+      this.lParent.forEach(function (pr) {
+        pr.active = false;
+      });
+      this.lChild[temp].forEach(function (ch) {
+        ch.active = false;
+      });
+
+      if (id != -1) {
+        this.lChild[index][id].active = true;
+        console.log('lchild = ', this.lChild[index][id].active);
+      } else {
+        this.lParent[index].active = true;
+        console.log('lparent = ', this.lParent[index].active);
+      }
+    },
+    enter: function enter(e, idd) {
+      e.preventDefault();
+      var index = 0;
+      this.content.forEach(function (ct, i) {
+        if (ct.id == idd) {
+          index = i;
+        }
+      });
+      this.aRow.forEach(function (fls) {
+        fls.row = false;
+      });
+      this.lParent.forEach(function (pr) {
+        pr.active = false;
+      });
+      var temp = 0;
+      this.fileContent.forEach(function (fc, ix) {
+        if (fc.children.length > 0) {
+          temp = ix;
+        }
+      });
+      this.lChild[temp].forEach(function (ch) {
+        ch.active = false;
+      });
+      this.aRow[index].row = true;
+    },
     stopDrag: function stopDrag() {
       console.log('xx = ', this.xx = false);
+      this.aRow.forEach(function (fls) {
+        fls.row = false;
+      });
+      this.lParent.forEach(function (pr) {
+        pr.active = false;
+      });
+      var temp = 0;
+      this.fileContent.forEach(function (fc, ix) {
+        if (fc.children.length > 0) {
+          temp = ix;
+        }
+      });
+      this.lChild[temp].forEach(function (ch) {
+        ch.active = false;
+      });
       this.fileToMove = '';
-      this.pictToMove = ''; // Vue.nextTick(function() {
+      this.pictToMove = '';
+      this.cursor = false; // Vue.nextTick(function() {
 
       this.topM = '0px';
       this.leftM = '0px'; // }.bind(this));
@@ -2372,6 +2575,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     onDrop: function onDrop(evt, type) {
       var itemID = evt.dataTransfer.getData('itemID');
+      console.log('ItemID = ', itemID);
       this.folderMove = type;
       this.content.splice(itemID, 1);
       this.alert = true;
@@ -2386,6 +2590,8 @@ __webpack_require__.r(__webpack_exports__);
     dragging: function dragging(evt) {
       this.xx = true;
       Vue.nextTick(function () {
+        this.cursor = true;
+
         if (this.xx) {
           var t = evt.pageY - 65;
           var l = evt.pageX - 247;
@@ -2403,9 +2609,11 @@ __webpack_require__.r(__webpack_exports__);
           index = i;
         }
       });
+      console.log('index = ', index);
       this.aRow.forEach(function (fls) {
         fls.row = false;
       });
+      this.cursor = true;
       this.fileToMove = this.content[index].file;
       this.pictToMove = this.getImg(idd);
       this.viewMenu = false;
@@ -7077,25 +7285,6 @@ __webpack_require__.r(__webpack_exports__);
 
 })));
 //# sourceMappingURL=bootstrap.js.map
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Home.vue?vue&type=style&index=0&lang=css&":
-/*!**********************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Home.vue?vue&type=style&index=0&lang=css& ***!
-  \**********************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.filterForm{\r\n    color: #BBBBBB;\r\n    border-radius: 5px;\r\n    height: 40px;\r\n    border: none;\n}\n#sidebar {\r\n    z-index: 2;\n}\n.sidebarShadow{\r\n    z-index: 1;\r\n    position: absolute;\r\n    min-width: 250px;\r\n    max-width: 250px;\r\n    height: 122vh;\r\n    background: #FAFAFA;\r\n    left: 0;\r\n    bottom: 0;\r\n    top: 6vh;\n}\n.btnX{\r\n    height: 40px;\r\n    border-radius: 10px;\r\n    border: none;\n}\n.btnX:focus{\r\n    outline: none;\n}\n.btn{\r\n    width: 100px;\r\n    border-radius: 10px;\r\n    background-color: #FFFFFF !important;\r\n    color: #1890FF !important;\r\n    box-shadow: 2px 2px 2px #ececec;\r\n    font-weight: bold;\n}\n#search input[type=\"text\"] {\r\n    border: none;\r\n    margin-top: 1vh;\r\n    margin-left: 2vh;\r\n    background: url('/img/search.png') no-repeat 10px 6px #FFFFFF;\r\n    font: bold 12px;\r\n    color: #777777;\r\n    width: 170px;\r\n    padding: 6px 15px 6px 35px;\r\n    border-radius: 20px;\r\n    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;\r\n    transition: all 0.7s ease 0s;\n}\n#search input[type=\"text\"]:focus {\r\n    outline: none;\r\n    width: 500px;\n}\n.demo-gallery ul > li > a {\r\n    max-width: 80px;\r\n    min-width: 80px;\n}\np{\r\n    color: #000000;\n}\ntable{\r\n        color: #4A4A4A;\n}\ntr{\r\n        height: 50px;\n}\ntbody > tr:hover{\r\n        background-color: #E7F3FF;\n}\n.alert {\r\n        height: 120px !important;\n}\n.bold{\r\n        opacity: 0.9;\r\n        background-color: red !important;\n}\n.rowM {\r\n        display: flex;\n}\n.columnM {\r\n        padding: 5px;\n}\n.move{\r\n        height: 100px;\r\n        display: block;\r\n        z-index: 5;\r\n        color: #000000;\r\n        max-width: 400px;\r\n        min-width: 400px;\r\n        box-shadow: 10px 10px 5px #EBEBEB;\r\n        border: 1px solid #4A85C5!important;\r\n        background-color: #E7F3FF;\r\n        position: absolute;\r\n        padding: 0.75rem 1.25rem;\r\n        border-radius: 0.25rem;\n}\n.list-enter-active{\r\n        visibility: hidden;\n}\n.list-leave-active {\r\n        visibility: hidden;\r\n        transition: all 0.35s;\n}\n#filterLabel{\r\n        z-index: 4; margin-top: 2vh; width: 100px; height: 40px; background-color: #FAFAFA;border-radius: 5px; left: 278px; position: absolute; cursor: pointer; font-weight: bold;\n}\n#filter{\r\n        z-index: 1;\r\n        left: 250px;\r\n        max-height: 350px;\r\n        min-height: 350px;\r\n        right: 0;\r\n        background-color: #E7F3FF;\r\n        color: #4A4A4A;\r\n        position: absolute;\r\n        transition: 0.5s;\n}\n#shadow{\r\n        z-index: 3;\r\n        right: 0;\r\n        max-width: 300px;\r\n        min-width: 300px;\r\n        background: #E7F3FF;\r\n        position: absolute;\r\n        height: 350px;\n}\n.fa-li {\r\n    position: static;\n}\n#right-click-menu{\r\n    background: #FFFFFF;\r\n    border: 1px solid #BDBDBD;\r\n    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);\r\n    display: block;\r\n    list-style: none;\r\n    margin: 0;\r\n    padding: 0;\r\n    position: absolute;\r\n    width: 250px;\r\n    z-index: 999999999999999;\r\n    outline: none;\n}\n#right-click-menu li {\r\n    margin: 0;\r\n    padding: 5px;\r\n    cursor: pointer;\r\n    width: 100%;\n}\n#right-click-menu li:last-child {\r\n    border-bottom: none;\n}\n#right-click-menu li:hover {\r\n    background: #E7F3FF;\r\n    color: #000000;\n}\n.alert-secondary {\r\n    background-color: #FAFAFA;\n}\n.alert{\r\n    height: 100px;\r\n    display: block;\r\n    z-index: 5;\r\n    margin-left: auto !important;\r\n    margin-right: auto !important;\r\n    top: 5%;\r\n    color: #000000;\r\n    max-width: 400px;\r\n    min-width: 400px;\r\n    box-shadow: 10px 10px 5px #ececec;\n}\n.mirror{\r\ntransform: scaleX(-1);\n}\n.clicked{\r\n    filter: invert(42%) sepia(67%) saturate(2836%) hue-rotate(193deg) brightness(102%) contrast(104%);\r\n    color: #1890FF;\n}\n.showFilter{\r\n    top: 345px !important;\n}\n.hideFilter{\r\n    top: 6vh !important;\n}\n.showDetails{\r\n    right: 300px !important;\n}\n.hideDetails{\r\n    right: 0px !important;\n}\n.active{\r\n    border: 1px solid #4A85C5!important;\r\n    border-radius: 100px;\r\n    background-color: #E7F3FF;\n}\na:hover{\r\n    border: 1px solid #4A85C5!important;\r\n    border-radius: 100px;\n}\n.img-responsive{\r\n        width: 50% !important;\n}\n#detailLabel{\r\n        z-index: 4; margin-top: 2vh; width: 30px; height: 50px; background-color: #FAFAFA;border-radius: 5px 0px 0px 5px; right: 0; position: absolute; \r\n            transition: right 0.5s ease; cursor: pointer;\n}\nbody { background: #FFFFFF; font-family: 'Roboto Condensed';\n}\n.container { margin: 150px auto;\n}\n.wrapper {\r\n        display: flex;\r\n        width: 100%;\r\n        align-items: stretch;\n}\n.wrapperContent {\r\n        display: flex;\r\n        width: 100%;\r\n        align-items: stretch;\r\n        height: 94vh;\n}\n.list-group-item {\r\n        background-color: #FAFAFA;\n}\n#stendard{\r\n        width: 150px;\n}\n#tree{\r\n        border: none !important;\n}\n.list-group-item {\r\n        border: none;\n}\n#content {\r\n        padding: 0;\n}\r\n    /* here */\ninput[type=\"checkbox\"] { \r\n            display: none;\n} \r\n\r\n    /* Toggling of sidebar */\ninput:checked~#detailLabel { \r\n        right: 300px;\n}\ninput:checked~.demo-gallery { \r\n        right: 300px;\n}\n#topNav {\r\n        height: 6vh;\r\n        background-color: #4A85C5;\n}\n#rightbar{\r\n        z-index: 2;\r\n        right: 0;\r\n        max-width: 300px;\r\n        min-width: 300px;\r\n        background: #FAFAFA;\r\n        color: #4A4A4A;\r\n        position: absolute;\r\n        height: 94vh;\r\n        transition: 0.5s;\n}\n@media (min-width: 992px){\n.col-lg-2 {\r\n        flex: 0 0 1%;\r\n        max-width: 21%;\n}\n}\n.demo-gallery {\r\n    padding: 20px;\r\n    right: 0;\r\n    position: absolute;\r\n    left: 250px;\r\n    background-color: #FFFFFF;\r\n    bottom: 0;\r\n    top: 6vh;\r\n    /* top: 26vh; */\r\n    z-index: 3;\r\n    height: 94vh; \r\n     transition: top 0.5s ease, right 0.5s ease;\n}\n.demo-gallery > ul {\r\n  margin-bottom: 0;\r\n  margin-top: 10vh;\n}\n.demo-gallery > ul > li {\r\n    float: left;\r\n    margin-bottom: 15px;\r\n    width: 200px;\n}\n.demo-gallery > ul > li a { \r\n  border: 3px solid #FFF;\r\n  border-radius: 3px;\r\n  display: block;\r\n  overflow: hidden;\r\n  position: relative;\r\n  float: left;\n}\n.demo-gallery > ul > li a > img {\r\n  transition: transform 0.15s ease 0s;\r\n  transform: scale3d(1, 1, 1);\r\n  height: 100%;\r\n  width: 100%;\n}\n.demo-gallery > ul > li a:hover > img {\r\n  transform: scale3d(1.1, 1.1, 1.1);\n}\n.demo-gallery > ul > li a:hover .demo-gallery-poster > img {\r\n  opacity: 1;\n}\n.demo-gallery > ul > li a .demo-gallery-poster {\r\n  background-color: rgba(0, 0, 0, 0.1);\r\n  bottom: 0;\r\n  left: 0;\r\n  position: absolute;\r\n  right: 0;\r\n  top: 0;\r\n  transition: background-color 0.15s ease 0s;\n}\n.demo-gallery > ul > li a .demo-gallery-poster > img {\r\n  left: 50%;\r\n  margin-left: -10px;\r\n  margin-top: -10px;\r\n  opacity: 0;\r\n  position: absolute;\r\n  top: 50%;\r\n  transition: opacity 0.3s ease 0s;\n}\n.demo-gallery > ul > li a:hover .demo-gallery-poster {\r\n  background-color: rgba(0, 0, 0, 0.5);\n}\n.demo-gallery .justified-gallery > a > img {\r\n  transition: transform 0.15s ease 0s;\r\n  transform: scale3d(1, 1, 1);\r\n  height: 100%;\r\n  width: 100%;\n}\n.demo-gallery .justified-gallery > a:hover > img {\r\n  transform: scale3d(1.1, 1.1, 1.1);\n}\n.demo-gallery .justified-gallery > a:hover .demo-gallery-poster > img {\r\n  opacity: 1;\n}\n.demo-gallery .justified-gallery > a .demo-gallery-poster {\r\n  background-color: rgba(0, 0, 0, 0.1);\r\n  bottom: 0;\r\n  left: 0;\r\n  position: absolute;\r\n  right: 0;\r\n  top: 0;\r\n  transition: background-color 0.15s ease 0s;\n}\n.demo-gallery .justified-gallery > a .demo-gallery-poster > img {\r\n  left: 50%;\r\n  margin-left: -10px;\r\n  margin-top: -10px;\r\n  opacity: 0;\r\n  position: absolute;\r\n  top: 50%;\r\n  transition: opacity 0.3s ease 0s;\n}\n.demo-gallery .justified-gallery > a:hover .demo-gallery-poster {\r\n  background-color: rgba(0, 0, 0, 0.5);\n}\n.demo-gallery .video .demo-gallery-poster img {\r\n  height: 48px;\r\n  margin-left: -24px;\r\n  margin-top: -24px;\r\n  opacity: 0.8;\r\n  width: 48px;\n}\n.demo-gallery.dark > ul > li a {\r\n  border: 3px solid #04070a;\n}\n.home .demo-gallery {\r\n  padding-bottom: 80px;\n}\r\n", ""]);
-
-// exports
 
 
 /***/ }),
@@ -38326,36 +38515,6 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Home.vue?vue&type=style&index=0&lang=css&":
-/*!**************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Home.vue?vue&type=style&index=0&lang=css& ***!
-  \**************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./Home.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Home.vue?vue&type=style&index=0&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Member.vue?vue&type=style&index=0&lang=css&":
 /*!****************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Member.vue?vue&type=style&index=0&lang=css& ***!
@@ -39003,13 +39162,458 @@ var render = function() {
     _c("nav", { attrs: { id: "sidebar" } }, [
       _vm._m(0),
       _vm._v(" "),
-      _vm.componentLoaded ? _c("div", { attrs: { id: "tree" } }) : _vm._e()
+      _c(
+        "div",
+        {
+          staticClass: "mt-5",
+          staticStyle: { "font-size": "12px", color: "#777777" }
+        },
+        [
+          _vm.componentLoaded
+            ? _c("ul", { attrs: { id: "myUL" } }, [
+                _c("li", [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "caret expand",
+                      staticStyle: {
+                        display: "flex",
+                        "align-items": "center",
+                        height: "55px",
+                        "padding-left": "20px",
+                        "padding-right": "10px"
+                      },
+                      on: {
+                        click: function($event) {
+                          $event.stopPropagation()
+                          $event.preventDefault()
+                          return _vm.clear()
+                        }
+                      }
+                    },
+                    [
+                      _c(
+                        "span",
+                        {
+                          staticClass: "material-icons-outlined mr-2",
+                          staticStyle: { "font-size": "18px" }
+                        },
+                        [_vm._v("face")]
+                      ),
+                      _vm._v(
+                        "\n                            Ahyar Ahfal Imanudin\n                        "
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "ul",
+                    {
+                      staticClass: "nested",
+                      staticStyle: { "padding-left": "0px" }
+                    },
+                    [
+                      _c("li", [
+                        _c(
+                          "span",
+                          {
+                            staticClass: "expand",
+                            staticStyle: {
+                              display: "flex",
+                              "align-items": "center",
+                              height: "55px",
+                              "padding-left": "50px",
+                              "padding-right": "10px"
+                            },
+                            on: {
+                              click: function($event) {
+                                $event.stopPropagation()
+                                $event.preventDefault()
+                                return _vm.clear()
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "span",
+                              {
+                                staticClass: "material-icons-outlined mr-2",
+                                staticStyle: { "font-size": "18px" }
+                              },
+                              [_vm._v("account_box")]
+                            ),
+                            _vm._v("Profile\n                                ")
+                          ]
+                        )
+                      ])
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("li", [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "expand",
+                      staticStyle: {
+                        display: "flex",
+                        "align-items": "center",
+                        height: "55px",
+                        "padding-left": "20px",
+                        "padding-right": "10px"
+                      },
+                      on: {
+                        click: function($event) {
+                          $event.stopPropagation()
+                          $event.preventDefault()
+                          return _vm.clear()
+                        }
+                      }
+                    },
+                    [
+                      _c(
+                        "span",
+                        {
+                          staticClass: "material-icons-outlined mr-2",
+                          staticStyle: {
+                            "margin-left": "10px",
+                            "font-size": "18px"
+                          }
+                        },
+                        [_vm._v("layers")]
+                      ),
+                      _vm._v("Document Generator\n                        ")
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("li", [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "caret expand",
+                      staticStyle: {
+                        display: "flex",
+                        "align-items": "center",
+                        height: "55px",
+                        "padding-left": "20px",
+                        "padding-right": "10px"
+                      },
+                      on: {
+                        click: function($event) {
+                          $event.stopPropagation()
+                          $event.preventDefault()
+                          return _vm.clear()
+                        }
+                      }
+                    },
+                    [
+                      _c(
+                        "span",
+                        {
+                          staticClass: "material-icons-outlined mr-2",
+                          staticStyle: { "font-size": "18px" }
+                        },
+                        [_vm._v("folder_open")]
+                      ),
+                      _vm._v(
+                        "\n                            Library\n                        "
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "ul",
+                    {
+                      staticClass: "nested",
+                      staticStyle: { "padding-left": "0px" }
+                    },
+                    _vm._l(_vm.fileContent, function(folder, index) {
+                      return _c("li", { key: index }, [
+                        _c(
+                          "span",
+                          {
+                            staticClass: "expand",
+                            class:
+                              folder.children.length > 0
+                                ? _vm.activeLib(index, -1)
+                                : _vm.activeLib(index, -2),
+                            staticStyle: {
+                              display: "flex",
+                              "align-items": "center",
+                              height: "55px",
+                              "padding-right": "10px"
+                            },
+                            style:
+                              folder.children.length > 0
+                                ? "padding-left: 50px"
+                                : "padding-left: 60px",
+                            attrs: { draggable: false },
+                            on: {
+                              drop: function($event) {
+                                $event.stopPropagation()
+                                return _vm.onDrop($event, folder.text)
+                              },
+                              dragover: function($event) {
+                                return $event.preventDefault()
+                              },
+                              dragenter: function($event) {
+                                return _vm.enterLib($event, index, -1)
+                              },
+                              dragend: function($event) {
+                                return _vm.stopDrag()
+                              },
+                              click: function($event) {
+                                $event.stopPropagation()
+                                $event.preventDefault()
+                                return _vm.clear()
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "span",
+                              {
+                                staticClass: "material-icons-outlined mr-2",
+                                staticStyle: { "font-size": "18px" }
+                              },
+                              [_vm._v("folder_open")]
+                            ),
+                            _vm._v(
+                              _vm._s(folder.text) +
+                                "\n                                "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        folder.children.length > 0
+                          ? _c(
+                              "ul",
+                              {
+                                staticClass: "nested",
+                                staticStyle: { "padding-left": "0px" }
+                              },
+                              _vm._l(folder.children, function(child, id) {
+                                return _c("li", { key: id }, [
+                                  _c(
+                                    "span",
+                                    {
+                                      staticClass: "expand",
+                                      class: _vm.activeLib(index, id),
+                                      staticStyle: {
+                                        display: "flex",
+                                        "align-items": "center",
+                                        height: "55px",
+                                        "padding-left": "80px",
+                                        "padding-right": "10px"
+                                      },
+                                      attrs: { draggable: false },
+                                      on: {
+                                        drop: function($event) {
+                                          $event.stopPropagation()
+                                          return _vm.onDrop($event, child.text)
+                                        },
+                                        dragover: function($event) {
+                                          return $event.preventDefault()
+                                        },
+                                        dragenter: function($event) {
+                                          return _vm.enterLib($event, index, id)
+                                        },
+                                        dragend: function($event) {
+                                          return _vm.stopDrag()
+                                        },
+                                        click: function($event) {
+                                          $event.stopPropagation()
+                                          $event.preventDefault()
+                                          return _vm.clear()
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "span",
+                                        {
+                                          staticClass:
+                                            "material-icons-outlined mr-2",
+                                          staticStyle: { "font-size": "18px" }
+                                        },
+                                        [_vm._v("folder_open")]
+                                      ),
+                                      _vm._v(
+                                        _vm._s(child.text) +
+                                          "\n                                        "
+                                      )
+                                    ]
+                                  )
+                                ])
+                              }),
+                              0
+                            )
+                          : _vm._e()
+                      ])
+                    }),
+                    0
+                  )
+                ]),
+                _vm._v(" "),
+                _c("li", [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "expand",
+                      staticStyle: {
+                        display: "flex",
+                        "align-items": "center",
+                        height: "55px",
+                        "padding-left": "20px",
+                        "padding-right": "10px"
+                      },
+                      on: {
+                        click: function($event) {
+                          $event.stopPropagation()
+                          $event.preventDefault()
+                          return _vm.clear()
+                        }
+                      }
+                    },
+                    [
+                      _c(
+                        "span",
+                        {
+                          staticClass: "material-icons-outlined mr-2",
+                          staticStyle: {
+                            "margin-left": "10px",
+                            "font-size": "18px"
+                          }
+                        },
+                        [_vm._v("swap_horiz")]
+                      ),
+                      _vm._v("Workflow\n                        ")
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("li", [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "expand",
+                      staticStyle: {
+                        display: "flex",
+                        "align-items": "center",
+                        height: "55px",
+                        "padding-left": "20px",
+                        "padding-right": "10px"
+                      },
+                      on: {
+                        click: function($event) {
+                          $event.stopPropagation()
+                          $event.preventDefault()
+                          return _vm.clear()
+                        }
+                      }
+                    },
+                    [
+                      _c(
+                        "span",
+                        {
+                          staticClass: "material-icons-outlined mr-2",
+                          staticStyle: {
+                            "margin-left": "10px",
+                            "font-size": "18px"
+                          }
+                        },
+                        [_vm._v("error_outline")]
+                      ),
+                      _vm._v("Help\n                        ")
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("li", [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "expand",
+                      staticStyle: {
+                        display: "flex",
+                        "align-items": "center",
+                        height: "55px",
+                        "padding-left": "20px",
+                        "padding-right": "10px"
+                      },
+                      on: {
+                        click: function($event) {
+                          $event.stopPropagation()
+                          $event.preventDefault()
+                          return _vm.clear()
+                        }
+                      }
+                    },
+                    [
+                      _c(
+                        "span",
+                        {
+                          staticClass: "material-icons-outlined mr-2",
+                          staticStyle: {
+                            "margin-left": "10px",
+                            "font-size": "18px"
+                          }
+                        },
+                        [_vm._v("format_list_numbered")]
+                      ),
+                      _vm._v("Audit Trail\n                        ")
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("li", [
+                  _c(
+                    "span",
+                    {
+                      staticClass: "expand",
+                      staticStyle: {
+                        display: "flex",
+                        "align-items": "center",
+                        height: "55px",
+                        "padding-left": "20px",
+                        "padding-right": "10px"
+                      },
+                      on: {
+                        click: function($event) {
+                          $event.stopPropagation()
+                          $event.preventDefault()
+                          return _vm.clear()
+                        }
+                      }
+                    },
+                    [
+                      _c(
+                        "span",
+                        {
+                          staticClass: "material-icons-outlined mr-2",
+                          staticStyle: {
+                            "margin-left": "10px",
+                            "font-size": "18px"
+                          }
+                        },
+                        [_vm._v("history")]
+                      ),
+                      _vm._v("Changelog\n                            "),
+                      _vm._m(1)
+                    ]
+                  )
+                ])
+              ])
+            : _vm._e()
+        ]
+      )
     ]),
     _vm._v(" "),
     _c("div", { attrs: { id: "content" } }, [
       _c("nav", { class: { sidebarShadow: _vm.showFilter ? true : false } }),
       _vm._v(" "),
-      _vm._m(1),
+      _vm._m(2),
       _vm._v(" "),
       _c(
         "div",
@@ -39037,7 +39641,6 @@ var render = function() {
             [
               _c("img", {
                 class: { mirror: _vm.mirror },
-                staticStyle: { width: "8px", "margin-top": "2vh" },
                 attrs: { src: "img/arrow.png" }
               })
             ]
@@ -39057,53 +39660,491 @@ var render = function() {
             })
           ]),
           _vm._v(" "),
+          _c("nav", { attrs: { id: "rightbarext" } }),
+          _vm._v(" "),
           _c("nav", { attrs: { id: "rightbar" } }, [
-            _vm._m(2),
-            _vm._v(" "),
             _vm.folder
-              ? _c("div", { staticClass: "p-4" }, [
-                  _c("h6", [_vm._v("Name")]),
-                  _vm._v(" "),
-                  _c("span", [_vm._v(_vm._s(_vm.name))]),
-                  _vm._v(" "),
-                  _c("h6", { staticClass: "mt-4" }, [_vm._v("File Type")]),
-                  _vm._v(" "),
-                  _c("span", [_vm._v("Folder")]),
-                  _vm._v(" "),
-                  _c("h6", { staticClass: "mt-4" }, [_vm._v("Created")]),
-                  _vm._v(" "),
-                  _c("span", [_vm._v(_vm._s(_vm.createFolder))])
-                ])
+              ? _c(
+                  "div",
+                  { staticClass: "p-4", staticStyle: { height: "94vh" } },
+                  [
+                    _vm._m(3),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "mb-1",
+                        staticStyle: {
+                          "font-size": "12px",
+                          color: "#BBBBBB",
+                          display: "block"
+                        }
+                      },
+                      [_vm._v("Folder Name")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "mb-4",
+                        staticStyle: {
+                          "font-size": "14px",
+                          color: "#4A4A4A",
+                          display: "block",
+                          "font-weight": "600",
+                          "font-family": "airbnb-book"
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.name))]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "mb-1",
+                        staticStyle: {
+                          "font-size": "12px",
+                          color: "#BBBBBB",
+                          display: "block"
+                        }
+                      },
+                      [_vm._v("Visibility")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "mb-4",
+                        staticStyle: {
+                          "font-size": "14px",
+                          color: "#4A4A4A",
+                          display: "block",
+                          "font-weight": "600",
+                          "font-family": "airbnb-book"
+                        }
+                      },
+                      [_vm._v("Anyone with the link")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "mb-1",
+                        staticStyle: {
+                          "font-size": "12px",
+                          color: "#BBBBBB",
+                          display: "block"
+                        }
+                      },
+                      [_vm._v("Owner")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "mb-4",
+                        staticStyle: {
+                          "font-size": "14px",
+                          color: "#4A4A4A",
+                          display: "block",
+                          "font-weight": "600",
+                          "font-family": "airbnb-book"
+                        }
+                      },
+                      [_vm._v("Ahyar Ahfal Imanudin")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "mb-1",
+                        staticStyle: {
+                          "font-size": "12px",
+                          color: "#BBBBBB",
+                          display: "block"
+                        }
+                      },
+                      [_vm._v("Total Size")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "mb-4",
+                        staticStyle: {
+                          "font-size": "14px",
+                          color: "#4A4A4A",
+                          display: "block",
+                          "font-weight": "600",
+                          "font-family": "airbnb-book"
+                        }
+                      },
+                      [_vm._v("32 MB")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "mb-1",
+                        staticStyle: {
+                          "font-size": "12px",
+                          color: "#BBBBBB",
+                          display: "block"
+                        }
+                      },
+                      [_vm._v("Created")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "mb-4",
+                        staticStyle: {
+                          "font-size": "14px",
+                          color: "#4A4A4A",
+                          display: "block",
+                          "font-weight": "600",
+                          "font-family": "airbnb-book"
+                        }
+                      },
+                      [_vm._v(_vm._s(_vm.createFolder))]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "mb-1",
+                        staticStyle: {
+                          "font-size": "12px",
+                          color: "#BBBBBB",
+                          display: "block"
+                        }
+                      },
+                      [_vm._v("Last Update")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticClass: "mb-4",
+                        staticStyle: {
+                          "font-size": "14px",
+                          color: "#4A4A4A",
+                          display: "block",
+                          "font-weight": "600",
+                          "font-family": "airbnb-book"
+                        }
+                      },
+                      [_vm._v("Tuesday, 25-12-2020")]
+                    )
+                  ]
+                )
               : _vm._e(),
             _vm._v(" "),
             _vm.file
               ? _c("div", { staticClass: "p-4" }, [
-                  _c("h6", [_vm._v("Name")]),
+                  _vm._m(4),
                   _vm._v(" "),
-                  _c("span", [_vm._v(_vm._s(_vm.name))]),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-1",
+                      staticStyle: {
+                        "font-size": "12px",
+                        color: "#BBBBBB",
+                        display: "block"
+                      }
+                    },
+                    [_vm._v("Document Name")]
+                  ),
                   _vm._v(" "),
-                  _c("h6", { staticClass: "mt-4" }, [_vm._v("File Type")]),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-4",
+                      staticStyle: {
+                        "font-size": "14px",
+                        color: "#4A4A4A",
+                        display: "block",
+                        "font-weight": "600",
+                        "font-family": "airbnb-book"
+                      }
+                    },
+                    [_vm._v(_vm._s(_vm.name))]
+                  ),
                   _vm._v(" "),
-                  _c("span", [_vm._v(_vm._s(_vm.type))]),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-1",
+                      staticStyle: {
+                        "font-size": "12px",
+                        color: "#BBBBBB",
+                        display: "block"
+                      }
+                    },
+                    [_vm._v("Visibility")]
+                  ),
                   _vm._v(" "),
-                  _c("h6", { staticClass: "mt-4" }, [_vm._v("Size")]),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-4",
+                      staticStyle: {
+                        "font-size": "14px",
+                        color: "#4A4A4A",
+                        display: "block",
+                        "font-weight": "600",
+                        "font-family": "airbnb-book"
+                      }
+                    },
+                    [_vm._v("Anyone with the link")]
+                  ),
                   _vm._v(" "),
-                  _c("span", [_vm._v(_vm._s(_vm.size))]),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-1",
+                      staticStyle: {
+                        "font-size": "12px",
+                        color: "#BBBBBB",
+                        display: "block"
+                      }
+                    },
+                    [_vm._v("Owner")]
+                  ),
                   _vm._v(" "),
-                  _c("h6", { staticClass: "mt-4" }, [_vm._v("Last Updated")]),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-4",
+                      staticStyle: {
+                        "font-size": "14px",
+                        color: "#4A4A4A",
+                        display: "block",
+                        "font-weight": "600",
+                        "font-family": "airbnb-book"
+                      }
+                    },
+                    [_vm._v("Ahyar Ahfal Imanudin")]
+                  ),
                   _vm._v(" "),
-                  _c("span", [_vm._v(_vm._s(_vm.lastUpdated))]),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-1",
+                      staticStyle: {
+                        "font-size": "12px",
+                        color: "#BBBBBB",
+                        display: "block"
+                      }
+                    },
+                    [_vm._v("Format")]
+                  ),
                   _vm._v(" "),
-                  _c("h6", { staticClass: "mt-4" }, [_vm._v("Status")]),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-4",
+                      staticStyle: {
+                        "font-size": "14px",
+                        color: "#4A4A4A",
+                        display: "block",
+                        "font-weight": "600",
+                        "font-family": "airbnb-book"
+                      }
+                    },
+                    [_vm._v("." + _vm._s(_vm.type))]
+                  ),
                   _vm._v(" "),
-                  _c("span", [_vm._v(_vm._s(_vm.status))])
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-1",
+                      staticStyle: {
+                        "font-size": "12px",
+                        color: "#BBBBBB",
+                        display: "block"
+                      }
+                    },
+                    [_vm._v("Version")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-4",
+                      staticStyle: {
+                        "font-size": "14px",
+                        color: "#4A4A4A",
+                        display: "block",
+                        "font-weight": "600",
+                        "font-family": "airbnb-book"
+                      }
+                    },
+                    [_vm._v("001")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-1",
+                      staticStyle: {
+                        "font-size": "12px",
+                        color: "#BBBBBB",
+                        display: "block"
+                      }
+                    },
+                    [_vm._v("Size")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-4",
+                      staticStyle: {
+                        "font-size": "14px",
+                        color: "#4A4A4A",
+                        display: "block",
+                        "font-weight": "600",
+                        "font-family": "airbnb-book"
+                      }
+                    },
+                    [_vm._v(_vm._s(_vm.size))]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-1",
+                      staticStyle: {
+                        "font-size": "12px",
+                        color: "#BBBBBB",
+                        display: "block"
+                      }
+                    },
+                    [_vm._v("Uploaded")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-4",
+                      staticStyle: {
+                        "font-size": "14px",
+                        color: "#4A4A4A",
+                        display: "block",
+                        "font-weight": "600",
+                        "font-family": "airbnb-book"
+                      }
+                    },
+                    [_vm._v("Monday, 24-12-2020")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-1",
+                      staticStyle: {
+                        "font-size": "12px",
+                        color: "#BBBBBB",
+                        display: "block"
+                      }
+                    },
+                    [_vm._v("Status")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-4",
+                      staticStyle: {
+                        "font-size": "14px",
+                        color: "#4A4A4A",
+                        display: "block",
+                        "font-weight": "600",
+                        "font-family": "airbnb-book"
+                      }
+                    },
+                    [_vm._v(_vm._s(_vm.status))]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-1",
+                      staticStyle: {
+                        "font-size": "12px",
+                        color: "#BBBBBB",
+                        display: "block"
+                      }
+                    },
+                    [_vm._v("Last Update")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-4",
+                      staticStyle: {
+                        "font-size": "14px",
+                        color: "#4A4A4A",
+                        display: "block",
+                        "font-weight": "600",
+                        "font-family": "airbnb-book"
+                      }
+                    },
+                    [_vm._v(_vm._s(_vm.lastUpdated))]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-1",
+                      staticStyle: {
+                        "font-size": "12px",
+                        color: "#BBBBBB",
+                        display: "block"
+                      }
+                    },
+                    [_vm._v("Location")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "mb-4",
+                      staticStyle: {
+                        "font-size": "14px",
+                        color: "#4A4A4A",
+                        display: "block",
+                        "font-weight": "600",
+                        "font-family": "airbnb-book"
+                      }
+                    },
+                    [_vm._v("Library")]
+                  ),
+                  _vm._v(" "),
+                  _vm._m(5),
+                  _vm._v(" "),
+                  _vm._m(6)
                 ])
               : _vm._e(),
             _vm._v(" "),
             _vm.thing
-              ? _c("div", { staticClass: "p-4" }, [
-                  _c("h6", [_vm._v("Target is Null")])
-                ])
+              ? _c(
+                  "div",
+                  {
+                    staticClass: "p-4",
+                    staticStyle: {
+                      height: "94vh",
+                      display: "flex",
+                      "content-justify": "center",
+                      "content-items": "center"
+                    }
+                  },
+                  [_c("span", [_vm._v("Nothing Selected")])]
+                )
               : _vm._e()
           ]),
           _vm._v(" "),
@@ -39111,6 +40152,12 @@ var render = function() {
             "label",
             {
               staticClass: "text-center",
+              staticStyle: {
+                display: "flex",
+                "align-items": "center",
+                "justify-content": "center",
+                "font-size": "14px"
+              },
               attrs: { id: "filterLabel" },
               on: {
                 click: function($event) {
@@ -39123,15 +40170,19 @@ var render = function() {
                 "div",
                 {
                   class: { clicked: _vm.clicked },
-                  staticStyle: { "margin-top": "0.8vh" }
+                  staticStyle: {
+                    display: "flex",
+                    "align-items": "center",
+                    "justify-content": "center",
+                    color: "#4A4A4A"
+                  }
                 },
                 [
-                  _c("img", {
-                    staticStyle: { width: "15px" },
-                    attrs: { src: "img/filter.png" }
-                  }),
+                  _c("span", { staticClass: "material-icons" }, [
+                    _vm._v(" filter_list ")
+                  ]),
                   _vm._v(" "),
-                  _c("span", [_vm._v("Filter")])
+                  _c("span", { staticClass: "ml-2" }, [_vm._v("Filter")])
                 ]
               )
             ]
@@ -39145,38 +40196,65 @@ var render = function() {
                 attrs: { method: "" }
               },
               [
-                _vm._m(3),
+                _vm._m(7),
                 _vm._v(" "),
                 _c("div", { staticClass: "rowM" }, [
-                  _vm._m(4),
+                  _vm._m(8),
                   _vm._v(" "),
-                  _vm._m(5),
+                  _vm._m(9),
                   _vm._v(" "),
-                  _c("div", { staticClass: "columnM mt-2" }, [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btnX mt-4 mr-2",
-                        staticStyle: {
-                          width: "80px",
-                          "background-color": "#1890FF",
-                          color: "#FFFFFF"
-                        },
-                        attrs: { type: "button" },
-                        on: {
-                          click: function($event) {
-                            return _vm.show()
+                  _c(
+                    "div",
+                    {
+                      staticClass: "columnM mt-4",
+                      staticStyle: {
+                        display: "flex",
+                        "justify-content": "center",
+                        "align-items": "center"
+                      }
+                    },
+                    [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btnX mr-2",
+                          staticStyle: {
+                            display: "flex",
+                            "justify-content": "center",
+                            "align-items": "center",
+                            width: "61px",
+                            height: "30px",
+                            "background-color": "#1890FF",
+                            color: "#FFFFFF",
+                            "font-size": "10px",
+                            "border-radius": "4px"
+                          },
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.show()
+                            }
                           }
-                        }
-                      },
-                      [
-                        _c("i", { staticClass: "fa fa-times mr-2" }),
-                        _vm._v("Close")
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _vm._m(6)
-                  ])
+                        },
+                        [
+                          _c(
+                            "span",
+                            {
+                              staticClass: "material-icons mr-1",
+                              staticStyle: {
+                                color: "#FFFFFF",
+                                "font-size": "13px"
+                              }
+                            },
+                            [_vm._v("close")]
+                          ),
+                          _vm._v("Close")
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _vm._m(10)
+                    ]
+                  )
                 ])
               ]
             )
@@ -39209,22 +40287,36 @@ var render = function() {
                     {
                       ref: "hehe",
                       staticClass: "move",
+                      staticStyle: {
+                        display: "flex",
+                        "align-items": "center",
+                        width: "339px !important",
+                        height: "74px",
+                        "border-radius": "8px",
+                        padding: "10px"
+                      },
                       style: { top: _vm.topM, left: _vm.leftM }
                     },
                     [
-                      _c("div", { staticClass: "mt-3" }, [
-                        _c("div", { staticClass: "rowM" }, [
-                          _c("div", { staticClass: "columnM" }, [
-                            _c("img", {
-                              staticStyle: { width: "30px" },
-                              attrs: { src: _vm.pictToMove }
-                            })
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "columnM" }, [
-                            _c("span", [_vm._v(_vm._s(_vm.fileToMove))])
-                          ])
-                        ])
+                      _c("div", { staticClass: "mr-2" }, [
+                        _c("img", {
+                          staticStyle: { width: "50px" },
+                          attrs: { src: _vm.pictToMove }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticStyle: { width: "261px" } }, [
+                        _c(
+                          "span",
+                          {
+                            staticStyle: {
+                              "font-size": "12px",
+                              "font-weight": "600",
+                              "font-family": "airbnb-book"
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.fileToMove))]
+                        )
                       ])
                     ]
                   )
@@ -39236,18 +40328,16 @@ var render = function() {
                     {
                       ref: "rightMenu",
                       staticClass: "fa-ul",
+                      staticStyle: {
+                        "font-size": "11px",
+                        "font-family": "airbnb-book",
+                        "border-radius": "8px",
+                        width: "186px"
+                      },
                       style: { top: _vm.top, left: _vm.left },
                       attrs: { id: "right-click-menu", tabindex: "-1" }
                     },
                     [
-                      _vm._m(7),
-                      _vm._v(" "),
-                      _vm._m(8),
-                      _vm._v(" "),
-                      _vm._m(9),
-                      _vm._v(" "),
-                      _vm._m(10),
-                      _vm._v(" "),
                       _vm._m(11),
                       _vm._v(" "),
                       _vm._m(12),
@@ -39262,14 +40352,28 @@ var render = function() {
                       _vm._v(" "),
                       _vm._m(17),
                       _vm._v(" "),
-                      _vm._m(18)
+                      _vm._m(18),
+                      _vm._v(" "),
+                      _vm._m(19),
+                      _vm._v(" "),
+                      _vm._m(20),
+                      _vm._v(" "),
+                      _vm._m(21),
+                      _vm._v(" "),
+                      _vm._m(22)
                     ]
                   )
                 : _vm._e(),
               _vm._v(" "),
               _c(
                 "h5",
-                { staticStyle: { "margin-top": "6vh", position: "absolute" } },
+                {
+                  staticStyle: {
+                    "margin-top": "9vh",
+                    "font-size": "16px",
+                    color: "#4A4A4A"
+                  }
+                },
                 [_vm._v("Recent Files")]
               ),
               _vm._v(" "),
@@ -39285,70 +40389,121 @@ var render = function() {
                         "li",
                         {
                           key: index,
-                          staticClass:
-                            "col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center"
+                          staticClass: "text-center mr-1",
+                          class: _vm.active(file.id),
+                          staticStyle: {
+                            width: "100px !important",
+                            height: "120px !important",
+                            display: "flex",
+                            "justify-content": "center",
+                            "align-items": "center",
+                            padding: "0"
+                          },
+                          attrs: { draggable: true },
+                          on: {
+                            dragstart: function($event) {
+                              return _vm.startDrag($event, file.id)
+                            },
+                            drag: function($event) {
+                              return _vm.dragging($event)
+                            },
+                            dragend: function($event) {
+                              return _vm.stopDrag()
+                            },
+                            contextmenu: function($event) {
+                              $event.stopPropagation()
+                              return _vm.openMenu($event, file.id)
+                            },
+                            click: function($event) {
+                              $event.stopPropagation()
+                              $event.preventDefault()
+                              return _vm.getDetails(file.id)
+                            }
+                          }
                         },
                         [
                           _c(
                             "a",
                             {
-                              class: _vm.active(file.id),
+                              staticStyle: {
+                                width: "100%",
+                                height: "100%",
+                                display: "flex",
+                                "justify-content": "center",
+                                "align-items": "center"
+                              },
                               attrs: { href: "", draggable: true },
                               on: {
-                                click: function($event) {
-                                  $event.stopPropagation()
-                                  $event.preventDefault()
-                                  return _vm.getDetails(file.id)
-                                },
                                 dragstart: function($event) {
                                   return _vm.startDrag($event, file.id)
                                 },
-                                contextmenu: function($event) {
-                                  $event.stopPropagation()
-                                  return _vm.openMenu($event, file.id)
+                                drag: function($event) {
+                                  return _vm.dragging($event)
                                 },
                                 dragend: function($event) {
                                   return _vm.stopDrag()
-                                },
-                                drag: function($event) {
-                                  return _vm.dragging($event)
                                 }
                               }
                             },
                             [
-                              _c("img", {
-                                staticClass: "img-responsive",
-                                attrs: { src: _vm.getImg(file.id) }
-                              }),
-                              _vm._v(" "),
-                              _c("div", [
-                                _c(
-                                  "span",
-                                  {
-                                    attrs: { draggable: true },
-                                    on: {
-                                      dragstart: function($event) {
-                                        return _vm.startDrag(
-                                          $event,
-                                          _vm.folder.id
-                                        )
-                                      },
-                                      drag: function($event) {
-                                        return _vm.dragging($event)
+                              _c(
+                                "div",
+                                {
+                                  staticStyle: {
+                                    width: "80px !important",
+                                    height: "96px"
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "div",
+                                    {
+                                      staticStyle: {
+                                        height: "80px !important",
+                                        display: "flex",
+                                        "justify-content": "center",
+                                        "align-items": "center"
                                       }
-                                    }
-                                  },
-                                  [
-                                    _vm._v(
-                                      _vm._s(
-                                        file.file.length > 10
-                                          ? file.file.slice(0, 10).concat("...")
-                                          : file.file
-                                      )
-                                    )
-                                  ]
-                                )
-                              ])
+                                    },
+                                    [
+                                      _c("img", {
+                                        staticClass: "img-responsive",
+                                        staticStyle: {
+                                          width: "70px !important"
+                                        },
+                                        attrs: { src: _vm.getImg(file.id) }
+                                      })
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticStyle: {
+                                        height: "16px !important",
+                                        display: "flex",
+                                        "justify-content": "center",
+                                        "align-items": "center",
+                                        "font-size": "12px",
+                                        "font-family": "airbnb-bold"
+                                      }
+                                    },
+                                    [
+                                      _c("span", [
+                                        _vm._v(
+                                          _vm._s(
+                                            file.file.length > 9
+                                              ? file.file
+                                                  .slice(0, 9)
+                                                  .concat(" ..")
+                                              : file.file
+                                          )
+                                        )
+                                      ])
+                                    ]
+                                  )
+                                ]
+                              )
                             ]
                           )
                         ]
@@ -39358,112 +40513,125 @@ var render = function() {
                   )
                 : _vm._e(),
               _vm._v(" "),
-              _c("h5", { staticStyle: { position: "absolute" } }, [
-                _vm._v("Folders")
-              ]),
+              _c(
+                "h5",
+                {
+                  staticStyle: {
+                    "margin-top": "2vh",
+                    "font-size": "16px",
+                    color: "#4A4A4A"
+                  }
+                },
+                [_vm._v("Folders")]
+              ),
               _vm._v(" "),
               _vm.contentLoaded
                 ? _c(
                     "ul",
-                    {
-                      staticClass: "list-unstyled row",
-                      staticStyle: { "margin-top": "4vh" }
-                    },
+                    { staticClass: "list-unstyled row" },
                     _vm._l(_vm.getFolders, function(folder, index) {
                       return _c(
                         "li",
                         {
                           key: index,
-                          staticClass:
-                            "col-xs-6 col-sm-4 col-md-2 col-lg-2 text-center"
+                          staticClass: "text-center mr-1",
+                          class: _vm.active(folder.id),
+                          staticStyle: {
+                            width: "100px !important",
+                            height: "120px !important",
+                            display: "flex",
+                            "justify-content": "center",
+                            "align-items": "center",
+                            padding: "0"
+                          },
+                          attrs: { draggable: false },
+                          on: {
+                            drop: function($event) {
+                              $event.stopPropagation()
+                              return _vm.onDrop($event, folder.file)
+                            },
+                            dragover: function($event) {
+                              return $event.preventDefault()
+                            },
+                            dragenter: function($event) {
+                              return _vm.enter($event, folder.id)
+                            },
+                            dragend: function($event) {
+                              return _vm.stopDrag()
+                            },
+                            click: function($event) {
+                              $event.stopPropagation()
+                              $event.preventDefault()
+                              return _vm.getDetails(folder.id)
+                            },
+                            contextmenu: function($event) {
+                              $event.stopPropagation()
+                              return _vm.openMenu($event, folder.id)
+                            }
+                          }
                         },
                         [
-                          _c(
-                            "a",
-                            {
-                              class: _vm.active(folder.id),
-                              attrs: { href: "", draggable: false },
-                              on: {
-                                click: function($event) {
-                                  $event.stopPropagation()
-                                  $event.preventDefault()
-                                  return _vm.getDetails(folder.id)
-                                },
-                                drop: function($event) {
-                                  return _vm.onDrop($event, folder.file)
-                                },
-                                dragover: function($event) {
-                                  return $event.preventDefault()
-                                },
-                                dragenter: function($event) {
-                                  return $event.preventDefault()
-                                },
-                                contextmenu: function($event) {
-                                  $event.stopPropagation()
-                                  return _vm.openMenu($event, folder.id)
-                                },
-                                dragend: function($event) {
-                                  return _vm.stopDrag()
-                                },
-                                drag: function($event) {
-                                  return _vm.dragging($event)
+                          _c("a", { attrs: { href: "", draggable: false } }, [
+                            _c(
+                              "div",
+                              {
+                                staticStyle: {
+                                  width: "80px !important",
+                                  height: "96px"
                                 }
-                              }
-                            },
-                            [
-                              _c("img", {
-                                staticClass: "img-responsive",
-                                attrs: {
-                                  src: _vm.getImg(folder.id),
-                                  draggable:
-                                    folder.type == "file" ? true : false
-                                },
-                                on: {
-                                  dragstart: function($event) {
-                                    folder.type == "file"
-                                      ? _vm.startDrag($event, folder.id)
-                                      : ""
-                                  },
-                                  drag: function($event) {
-                                    return _vm.dragging($event)
-                                  }
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("div", [
+                              },
+                              [
                                 _c(
-                                  "span",
+                                  "div",
                                   {
-                                    attrs: {
-                                      draggable:
-                                        folder.type == "file" ? true : false
-                                    },
-                                    on: {
-                                      dragstart: function($event) {
-                                        folder.type == "file"
-                                          ? _vm.startDrag($event, folder.id)
-                                          : ""
-                                      },
-                                      drag: function($event) {
-                                        return _vm.dragging($event)
-                                      }
+                                    staticStyle: {
+                                      height: "80px !important",
+                                      display: "flex",
+                                      "justify-content": "center",
+                                      "align-items": "center"
                                     }
                                   },
                                   [
-                                    _vm._v(
-                                      _vm._s(
-                                        folder.file.length > 10
-                                          ? folder.file
-                                              .slice(0, 10)
-                                              .concat("...")
-                                          : folder.file
+                                    _c("img", {
+                                      staticClass: "img-responsive",
+                                      staticStyle: { width: "70px !important" },
+                                      attrs: {
+                                        src: _vm.getImg(folder.id),
+                                        draggable: false
+                                      }
+                                    })
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    staticStyle: {
+                                      height: "16px !important",
+                                      display: "flex",
+                                      "justify-content": "center",
+                                      "align-items": "center",
+                                      "font-size": "12px",
+                                      "font-family": "airbnb-bold"
+                                    }
+                                  },
+                                  [
+                                    _c("span", [
+                                      _vm._v(
+                                        _vm._s(
+                                          folder.file.length > 9
+                                            ? folder.file
+                                                .slice(0, 9)
+                                                .concat(" ..")
+                                            : folder.file
+                                        )
                                       )
-                                    )
+                                    ])
                                   ]
                                 )
-                              ])
-                            ]
-                          )
+                              ]
+                            )
+                          ])
                         ]
                       )
                     }),
@@ -39479,10 +40647,13 @@ var render = function() {
                       attrs: { id: "example", border: "0" }
                     },
                     [
-                      _vm._m(19),
+                      _vm._m(23),
+                      _vm._v(" "),
+                      _c("tr", { staticStyle: { height: "20px" } }),
                       _vm._v(" "),
                       _c(
                         "tbody",
+                        { staticStyle: { "font-size": "11px" } },
                         _vm._l(_vm.getFiles, function(file, index) {
                           return _c(
                             "tr",
@@ -39499,15 +40670,15 @@ var render = function() {
                                 dragstart: function($event) {
                                   return _vm.startDrag($event, file.id)
                                 },
-                                contextmenu: function($event) {
-                                  $event.stopPropagation()
-                                  return _vm.openMenu($event, file.id)
-                                },
                                 dragend: function($event) {
                                   return _vm.stopDrag()
                                 },
                                 drag: function($event) {
                                   return _vm.dragging($event)
+                                },
+                                contextmenu: function($event) {
+                                  $event.stopPropagation()
+                                  return _vm.openMenu($event, file.id)
                                 }
                               }
                             },
@@ -39521,15 +40692,17 @@ var render = function() {
                                 _vm._v(_vm._s(file.file))
                               ]),
                               _vm._v(" "),
-                              _c("td", [_vm._v(_vm._s(file.doc_no))]),
+                              _c("td", [
+                                _vm._v(
+                                  _vm._s(file.doc_no != "" ? file.doc_no : "-")
+                                )
+                              ]),
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(file.size))]),
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(file.file_status))]),
                               _vm._v(" "),
-                              _c("td", [
-                                _vm._v(_vm._s(file.file_last_updated))
-                              ]),
+                              _c("td", [_vm._v(_vm._s(file.last_updated))]),
                               _vm._v(" "),
                               _c("td", [_vm._v(_vm._s(file.last_updated))])
                             ]
@@ -39549,25 +40722,65 @@ var render = function() {
                 {
                   staticClass:
                     "alert alert-secondary alert-dismissible fade show",
+                  staticStyle: {
+                    display: "flex",
+                    "align-items": "center",
+                    width: "433px !important",
+                    height: "84px !important"
+                  },
                   attrs: { role: "alert" }
                 },
                 [
-                  _c("div", { staticClass: "mt-3" }, [
-                    _c("div", [_vm._v("Successfully move the file to")]),
+                  _c("div", { staticStyle: { width: "95%" } }, [
+                    _c(
+                      "span",
+                      {
+                        staticStyle: {
+                          display: "block",
+                          "font-size": "14px",
+                          "font-weight": "600",
+                          "font-family": "airbnb-book"
+                        }
+                      },
+                      [_vm._v("Successfully move the file to")]
+                    ),
                     _vm._v(" "),
-                    _c("div", { staticClass: "rowM" }, [
-                      _vm._m(20),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "columnM" }, [
-                        _c("span", [_vm._v(_vm._s(_vm.folderMove))])
-                      ])
-                    ])
+                    _c(
+                      "div",
+                      {
+                        staticClass: "rowM",
+                        staticStyle: {
+                          display: "flex",
+                          "align-items": "center"
+                        }
+                      },
+                      [
+                        _vm._m(24),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "columnM" }, [
+                          _c(
+                            "span",
+                            {
+                              staticStyle: {
+                                color: "#4A4A4A",
+                                display: "block",
+                                "font-size": "12px",
+                                "font-weight": "600",
+                                "font-family": "airbnb-book"
+                              }
+                            },
+                            [_vm._v(_vm._s(_vm.folderMove))]
+                          )
+                        ])
+                      ]
+                    )
                   ]),
                   _vm._v(" "),
                   _c(
                     "button",
                     {
                       staticClass: "close",
+                      staticStyle: { outline: "none", top: "20%" },
                       attrs: {
                         type: "button",
                         "data-dismiss": "alert",
@@ -39580,9 +40793,14 @@ var render = function() {
                       }
                     },
                     [
-                      _c("span", { attrs: { "aria-hidden": "true" } }, [
-                        _vm._v("×")
-                      ])
+                      _c(
+                        "span",
+                        {
+                          staticStyle: { display: "block" },
+                          attrs: { "aria-hidden": "true" }
+                        },
+                        [_vm._v("×")]
+                      )
                     ]
                   )
                 ]
@@ -39599,40 +40817,673 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "sidebar-header text-center" }, [
-      _c("img", { attrs: { id: "stendard", src: "img/stendard.png" } }),
-      _vm._v(" "),
-      _c("button", { staticClass: "btn mt-3", attrs: { type: "button" } }, [
-        _c("span", { staticClass: "mr-1", staticStyle: { color: "#52C41A" } }, [
-          _vm._v("+")
-        ]),
-        _vm._v(" Add")
-      ])
-    ])
+    return _c(
+      "div",
+      {
+        staticClass: "sidebar-header text-center mt-5 mb-5",
+        staticStyle: { "font-family": "airbnb-light" }
+      },
+      [
+        _c("img", { attrs: { id: "stendard", src: "img/stendard.png" } }),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn mt-4",
+            staticStyle: { width: "122px", height: "40px" },
+            attrs: { type: "button" }
+          },
+          [
+            _c(
+              "span",
+              { staticClass: "mr-1", staticStyle: { color: "#52C41A" } },
+              [_vm._v("+")]
+            ),
+            _vm._v(" Add")
+          ]
+        )
+      ]
+    )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { attrs: { id: "topNav" } }, [
-      _c("form", { staticClass: "pt-1", attrs: { method: "", id: "search" } }, [
-        _c("input", {
-          attrs: {
-            name: "q",
-            type: "text",
-            size: "40",
-            placeholder: "Search solution..."
+    return _c(
+      "div",
+      {
+        staticClass: "ml-4",
+        staticStyle: {
+          width: "44px",
+          height: "21px",
+          "border-radius": "16px",
+          "background-color": "#1890FF",
+          display: "flex",
+          "align-items": "center",
+          "justify-content": "center"
+        }
+      },
+      [
+        _c("span", { staticStyle: { color: "#FFFFFF", "font-size": "10px" } }, [
+          _vm._v("NEW")
+        ])
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass: "row justify-content-between",
+        staticStyle: { display: "flex", "align-items": "center" },
+        attrs: { id: "topNav" }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "col-auto ml-4",
+            staticStyle: {
+              "background-color": "#FFFFFF",
+              "border-radius": "24px",
+              display: "flex",
+              "align-items": "center",
+              "font-family": "airbnb-book",
+              height: "38px",
+              padding: "5px 15px 5px 15px"
+            },
+            attrs: { id: "searchbox" }
+          },
+          [
+            _c("input", {
+              staticStyle: { border: "none", outline: "none" },
+              attrs: { type: "text", placeholder: "Search solution..." }
+            }),
+            _vm._v(" "),
+            _c(
+              "span",
+              {
+                staticClass: "material-icons",
+                staticStyle: { color: "#777777", width: "7.5px" }
+              },
+              [_vm._v("search")]
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass: "col-auto",
+            staticStyle: {
+              color: "#FFFFFF",
+              display: "flex",
+              "align-items": "center"
+            }
+          },
+          [
+            _c(
+              "a",
+              {
+                staticClass: "mr-5",
+                staticStyle: { "font-size": "12px" },
+                attrs: { href: "" }
+              },
+              [_c("u", [_vm._v("10 Days left for your trial account")])]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn mr-5",
+                staticStyle: {
+                  width: "109px",
+                  height: "29px",
+                  "border-radius": "8px",
+                  "background-color": "#EF8019 !important",
+                  color: "#FFFFFF !important",
+                  "box-shadow": "none",
+                  "font-size": "10px",
+                  "font-weight": "600",
+                  "font-family": "airbnb-book"
+                },
+                attrs: { type: "button" }
+              },
+              [_vm._v(" Upgrade My Plan")]
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "mr-5",
+                staticStyle: {
+                  height: "30px",
+                  width: "280px",
+                  display: "flex",
+                  "align-items": "center",
+                  color: "#FFFFFF"
+                }
+              },
+              [
+                _c(
+                  "div",
+                  { staticClass: "mr-2", staticStyle: { width: "30px" } },
+                  [
+                    _c(
+                      "span",
+                      {
+                        staticStyle: {
+                          display: "block",
+                          "font-size": "8px",
+                          "font-weight": "600",
+                          "font-family": "airbnb-book"
+                        }
+                      },
+                      [_vm._v("Used")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticStyle: {
+                          display: "block",
+                          "font-size": "10px",
+                          "font-weight": "600",
+                          "font-family": "airbnb-book"
+                        }
+                      },
+                      [_vm._v("54 Mb")]
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "mr-2",
+                    staticStyle: {
+                      width: "205px",
+                      height: "6px",
+                      "background-color": "#FFFFFF",
+                      display: "flex",
+                      "border-radius": "8px 8px 8px 8px"
+                    }
+                  },
+                  [
+                    _c("div", {
+                      staticStyle: {
+                        width: "10%",
+                        "background-color": "#FF8717",
+                        "border-radius": "8px 0px 0px 8px"
+                      }
+                    })
+                  ]
+                ),
+                _vm._v(" "),
+                _c("div", { staticStyle: { width: "30px" } }, [
+                  _c(
+                    "span",
+                    {
+                      staticStyle: {
+                        display: "block",
+                        "font-size": "8px",
+                        "font-weight": "600",
+                        "font-family": "airbnb-book"
+                      }
+                    },
+                    [_vm._v("Total")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticStyle: {
+                        display: "block",
+                        "font-size": "10px",
+                        "font-weight": "600",
+                        "font-family": "airbnb-book"
+                      }
+                    },
+                    [_vm._v("2 Gb")]
+                  )
+                ])
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "span",
+              {
+                staticClass: "material-icons-outlined mr-5",
+                staticStyle: { "font-size": "24px" }
+              },
+              [_vm._v("domain")]
+            ),
+            _vm._v(" "),
+            _c(
+              "span",
+              {
+                staticClass: "material-icons-outlined mr-5",
+                staticStyle: { "font-size": "24px" }
+              },
+              [_vm._v("notifications_active")]
+            )
+          ]
+        )
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      { staticClass: "mt-2 mb-5", staticStyle: { display: "flex" } },
+      [
+        _c(
+          "button",
+          {
+            staticClass: "btn mt-1 mr-3",
+            staticStyle: {
+              width: "88px",
+              "border-radius": "10px",
+              height: "40px",
+              color: "#07900C !important",
+              "box-shadow": "none",
+              "font-size": "14px",
+              "font-weight": "600",
+              "font-family": "airbnb-book"
+            },
+            attrs: { type: "button" }
+          },
+          [_vm._v("Rename")]
+        ),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn mt-1 mr-2",
+            staticStyle: {
+              display: "flex",
+              "justify-content": "center",
+              "align-items": "center",
+              width: "40px",
+              height: "40px",
+              "border-radius": "10px",
+              color: "#4A4A4A !important",
+              "box-shadow": "none",
+              "font-family": "airbnb-book"
+            },
+            attrs: { type: "button" }
+          },
+          [
+            _c(
+              "span",
+              {
+                staticClass: "material-icons-outlined",
+                staticStyle: { "font-size": "20px" }
+              },
+              [_vm._v("get_app")]
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn mt-1 mr-2",
+            staticStyle: {
+              display: "flex",
+              "justify-content": "center",
+              "align-items": "center",
+              width: "40px",
+              height: "40px",
+              "border-radius": "10px",
+              color: "#4A4A4A !important",
+              "box-shadow": "none",
+              "font-family": "airbnb-book"
+            },
+            attrs: { type: "button" }
+          },
+          [
+            _c(
+              "span",
+              {
+                staticClass: "material-icons-outlined",
+                staticStyle: { "font-size": "20px" }
+              },
+              [_vm._v("link")]
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn mt-1 mr-2",
+            staticStyle: {
+              display: "flex",
+              "justify-content": "center",
+              "align-items": "center",
+              width: "40px",
+              height: "40px",
+              "border-radius": "10px",
+              color: "#4A4A4A !important",
+              "box-shadow": "none",
+              "font-family": "airbnb-book"
+            },
+            attrs: { type: "button" }
+          },
+          [
+            _c(
+              "span",
+              {
+                staticClass: "material-icons-outlined",
+                staticStyle: { "font-size": "20px" }
+              },
+              [_vm._v("delete")]
+            )
+          ]
+        )
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      { staticClass: "mt-2 mb-5", staticStyle: { display: "flex" } },
+      [
+        _c(
+          "button",
+          {
+            staticClass: "btn mt-1 mr-3",
+            staticStyle: {
+              width: "88px",
+              "border-radius": "10px",
+              height: "40px",
+              color: "#07900C !important",
+              "box-shadow": "none",
+              "font-size": "14px",
+              "font-weight": "600",
+              "font-family": "airbnb-book"
+            },
+            attrs: { type: "button" }
+          },
+          [_vm._v("Live Edit")]
+        ),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn mt-1 mr-2",
+            staticStyle: {
+              display: "flex",
+              "justify-content": "center",
+              "align-items": "center",
+              width: "40px",
+              height: "40px",
+              "border-radius": "10px",
+              color: "#4A4A4A !important",
+              "box-shadow": "none",
+              "font-family": "airbnb-book"
+            },
+            attrs: { type: "button" }
+          },
+          [
+            _c(
+              "span",
+              {
+                staticClass: "material-icons-outlined",
+                staticStyle: { "font-size": "20px" }
+              },
+              [_vm._v("get_app")]
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn mt-1 mr-2",
+            staticStyle: {
+              display: "flex",
+              "justify-content": "center",
+              "align-items": "center",
+              width: "40px",
+              height: "40px",
+              "border-radius": "10px",
+              color: "#4A4A4A !important",
+              "box-shadow": "none",
+              "font-family": "airbnb-book"
+            },
+            attrs: { type: "button" }
+          },
+          [
+            _c(
+              "span",
+              {
+                staticClass: "material-icons-outlined",
+                staticStyle: { "font-size": "20px" }
+              },
+              [_vm._v("link")]
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn mt-1 mr-2",
+            staticStyle: {
+              display: "flex",
+              "justify-content": "center",
+              "align-items": "center",
+              width: "40px",
+              height: "40px",
+              "border-radius": "10px",
+              color: "#4A4A4A !important",
+              "box-shadow": "none",
+              "font-family": "airbnb-book"
+            },
+            attrs: { type: "button" }
+          },
+          [
+            _c(
+              "span",
+              {
+                staticClass: "material-icons-outlined",
+                staticStyle: { "font-size": "20px" }
+              },
+              [_vm._v("delete")]
+            )
+          ]
+        )
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3", staticStyle: { width: "238px" } }, [
+      _c(
+        "div",
+        {
+          staticClass: "p-3",
+          staticStyle: {
+            "background-color": "#E7F3FF",
+            display: "flex",
+            "align-items": "center",
+            "border-radius": "8px 8px 0px 0px",
+            height: "44px"
           }
-        })
-      ])
+        },
+        [
+          _c(
+            "span",
+            {
+              staticStyle: {
+                "font-size": "12px",
+                "font-weight": "600",
+                "font-family": "airbnb-book"
+              }
+            },
+            [_vm._v("Who Can Edit")]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "p-3",
+          staticStyle: {
+            "background-color": "#FFFFFF",
+            display: "flex",
+            "align-items": "center",
+            height: "32px"
+          }
+        },
+        [
+          _c(
+            "span",
+            {
+              staticStyle: {
+                "font-size": "12px",
+                "font-weight": "400",
+                "font-family": "airbnb-book",
+                color: "#777777"
+              }
+            },
+            [_vm._v("Ahyar Ahfal Imanudin")]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "p-3",
+          staticStyle: {
+            "background-color": "#FFFFFF",
+            display: "flex",
+            "align-items": "center",
+            height: "32px"
+          }
+        },
+        [
+          _c(
+            "span",
+            {
+              staticStyle: {
+                "font-size": "12px",
+                "font-weight": "400",
+                "font-family": "airbnb-book",
+                color: "#777777",
+                width: "95%"
+              }
+            },
+            [_vm._v("Aisyah Marlinda Saputri")]
+          ),
+          _vm._v(" "),
+          _c("a", { attrs: { href: "" } }, [
+            _c(
+              "span",
+              {
+                staticClass: "material-icons",
+                staticStyle: { "font-size": "12px", color: "#777777" }
+              },
+              [_vm._v("close")]
+            )
+          ])
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "p-3",
+          staticStyle: {
+            "background-color": "#FFFFFF",
+            display: "flex",
+            "align-items": "center",
+            height: "32px",
+            "border-radius": "0px 0px 8px 8px"
+          }
+        },
+        [
+          _c("a", { attrs: { href: "" } }, [
+            _c(
+              "span",
+              {
+                staticStyle: {
+                  "font-size": "12px",
+                  "font-weight": "400",
+                  "font-family": "airbnb-book",
+                  color: "#1890FF",
+                  width: "95%"
+                }
+              },
+              [_vm._v("Add Editor")]
+            )
+          ])
+        ]
+      )
     ])
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "sidebar-header text-center p-2" }, [
-      _c("h5", [_vm._v("Details")])
+    return _c("div", { staticStyle: { width: "238px" } }, [
+      _c(
+        "div",
+        {
+          staticClass: "p-3",
+          staticStyle: {
+            "background-color": "#E7F3FF",
+            display: "flex",
+            "align-items": "center",
+            "border-radius": "8px 8px 0px 0px",
+            height: "44px"
+          }
+        },
+        [
+          _c(
+            "span",
+            {
+              staticStyle: {
+                "font-size": "12px",
+                "font-weight": "600",
+                "font-family": "airbnb-book",
+                width: "90%"
+              }
+            },
+            [_vm._v("Attachment")]
+          ),
+          _vm._v(" "),
+          _c("a", { attrs: { href: "" } }, [
+            _c(
+              "span",
+              {
+                staticStyle: {
+                  "font-size": "12px",
+                  "font-weight": "600",
+                  "font-family": "airbnb-book",
+                  color: "#1890FF"
+                }
+              },
+              [_vm._v("Edit")]
+            )
+          ])
+        ]
+      )
     ])
   },
   function() {
@@ -39645,7 +41496,12 @@ var staticRenderFns = [
           _c(
             "label",
             {
-              staticStyle: { color: "#000000", "font-weight": "bold" },
+              staticStyle: {
+                color: "#000000",
+                "font-size": "10px",
+                "font-weight": "600",
+                "font-family": "airbnb-book"
+              },
               attrs: { for: "" }
             },
             [_vm._v("Document Type")]
@@ -39654,11 +41510,16 @@ var staticRenderFns = [
         _vm._v(" "),
         _c(
           "select",
-          { staticClass: "filterForm", staticStyle: { width: "250px" } },
+          {
+            staticClass: "filterForm",
+            staticStyle: { width: "230px", height: "30px", outline: "none" }
+          },
           [
-            _c("option", { attrs: { value: "" } }, [
-              _vm._v("Manual, procedure, project, etc.")
-            ]),
+            _c(
+              "option",
+              { staticStyle: { color: "#000000" }, attrs: { value: "" } },
+              [_vm._v("Manual, procedure, project, etc.")]
+            ),
             _vm._v(" "),
             _c("option", { attrs: { value: "" } })
           ]
@@ -39670,7 +41531,12 @@ var staticRenderFns = [
           _c(
             "label",
             {
-              staticStyle: { color: "#000000", "font-weight": "bold" },
+              staticStyle: {
+                color: "#000000",
+                "font-size": "10px",
+                "font-weight": "600",
+                "font-family": "airbnb-book"
+              },
               attrs: { for: "" }
             },
             [_vm._v("Format")]
@@ -39679,11 +41545,16 @@ var staticRenderFns = [
         _vm._v(" "),
         _c(
           "select",
-          { staticClass: "filterForm", staticStyle: { width: "250px" } },
+          {
+            staticClass: "filterForm",
+            staticStyle: { width: "230px", height: "30px", outline: "none" }
+          },
           [
-            _c("option", { attrs: { value: "" } }, [
-              _vm._v("pdf, doc, or xls")
-            ]),
+            _c(
+              "option",
+              { staticStyle: { color: "#000000" }, attrs: { value: "" } },
+              [_vm._v("pdf, doc, or xls")]
+            ),
             _vm._v(" "),
             _c("option", { attrs: { value: "" } })
           ]
@@ -39695,7 +41566,12 @@ var staticRenderFns = [
           _c(
             "label",
             {
-              staticStyle: { color: "#000000", "font-weight": "bold" },
+              staticStyle: {
+                color: "#000000",
+                "font-size": "10px",
+                "font-weight": "600",
+                "font-family": "airbnb-book"
+              },
               attrs: { for: "" }
             },
             [_vm._v("Author")]
@@ -39704,9 +41580,16 @@ var staticRenderFns = [
         _vm._v(" "),
         _c(
           "select",
-          { staticClass: "filterForm", staticStyle: { width: "250px" } },
+          {
+            staticClass: "filterForm",
+            staticStyle: { width: "230px", height: "30px", outline: "none" }
+          },
           [
-            _c("option", { attrs: { value: "" } }, [_vm._v("-")]),
+            _c(
+              "option",
+              { staticStyle: { color: "#000000" }, attrs: { value: "" } },
+              [_vm._v("-")]
+            ),
             _vm._v(" "),
             _c("option", { attrs: { value: "" } })
           ]
@@ -39718,7 +41601,12 @@ var staticRenderFns = [
           _c(
             "label",
             {
-              staticStyle: { color: "#000000", "font-weight": "bold" },
+              staticStyle: {
+                color: "#000000",
+                "font-size": "10px",
+                "font-weight": "600",
+                "font-family": "airbnb-book"
+              },
               attrs: { for: "" }
             },
             [_vm._v("Department")]
@@ -39727,11 +41615,16 @@ var staticRenderFns = [
         _vm._v(" "),
         _c(
           "select",
-          { staticClass: "filterForm", staticStyle: { width: "250px" } },
+          {
+            staticClass: "filterForm",
+            staticStyle: { width: "230px", height: "30px", outline: "none" }
+          },
           [
-            _c("option", { attrs: { value: "" } }, [
-              _vm._v("Select Department")
-            ]),
+            _c(
+              "option",
+              { staticStyle: { color: "#000000" }, attrs: { value: "" } },
+              [_vm._v("Select Department")]
+            ),
             _vm._v(" "),
             _c("option", { attrs: { value: "" } })
           ]
@@ -39748,7 +41641,12 @@ var staticRenderFns = [
         _c(
           "label",
           {
-            staticStyle: { color: "#000000", "font-weight": "bold" },
+            staticStyle: {
+              color: "#000000",
+              "font-size": "10px",
+              "font-weight": "600",
+              "font-family": "airbnb-book"
+            },
             attrs: { for: "" }
           },
           [_vm._v("Select Category")]
@@ -39757,9 +41655,16 @@ var staticRenderFns = [
       _vm._v(" "),
       _c(
         "select",
-        { staticClass: "filterForm", staticStyle: { width: "250px" } },
+        {
+          staticClass: "filterForm",
+          staticStyle: { width: "230px", height: "30px", outline: "none" }
+        },
         [
-          _c("option", { attrs: { value: "" } }, [_vm._v("Select Category")]),
+          _c(
+            "option",
+            { staticStyle: { color: "#000000" }, attrs: { value: "" } },
+            [_vm._v("Select Category")]
+          ),
           _vm._v(" "),
           _c("option", { attrs: { value: "" } })
         ]
@@ -39775,7 +41680,12 @@ var staticRenderFns = [
         _c(
           "label",
           {
-            staticStyle: { color: "#000000", "font-weight": "bold" },
+            staticStyle: {
+              color: "#000000",
+              "font-size": "10px",
+              "font-weight": "600",
+              "font-family": "airbnb-book"
+            },
             attrs: { for: "" }
           },
           [_vm._v("File Status")]
@@ -39784,11 +41694,16 @@ var staticRenderFns = [
       _vm._v(" "),
       _c(
         "select",
-        { staticClass: "filterForm", staticStyle: { width: "250px" } },
+        {
+          staticClass: "filterForm",
+          staticStyle: { width: "230px", height: "30px", outline: "none" }
+        },
         [
-          _c("option", { attrs: { value: "" } }, [
-            _vm._v("Draft, published, authorized, etc.")
-          ]),
+          _c(
+            "option",
+            { staticStyle: { color: "#000000" }, attrs: { value: "" } },
+            [_vm._v("Draft, published, authorized, etc.")]
+          ),
           _vm._v(" "),
           _c("option", { attrs: { value: "" } })
         ]
@@ -39802,124 +41717,348 @@ var staticRenderFns = [
     return _c(
       "button",
       {
-        staticClass: "btnX mt-4",
+        staticClass: "btnX",
         staticStyle: {
-          width: "120px",
+          display: "flex",
+          "justify-content": "center",
+          "align-items": "center",
+          width: "88px",
+          height: "30px",
           "background-color": "#FAFAFA",
-          color: "#1890FF"
+          color: "#1890FF",
+          "font-size": "10px",
+          "border-radius": "4px"
         },
         attrs: { type: "button" }
       },
-      [_c("i", { staticClass: "fa fa-history mr-2" }), _vm._v("Reset Filter")]
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons mr-1",
+            staticStyle: { color: "#1890FF", "font-size": "13px" }
+          },
+          [_vm._v("history")]
+        ),
+        _vm._v("Reset Filter")
+      ]
     )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", [
-      _c("i", { staticClass: "fa-li fa fa-eye" }),
-      _vm._v("Preview")
-    ])
+    return _c(
+      "li",
+      {
+        staticStyle: {
+          display: "flex",
+          "align-items": "center",
+          "padding-left": "10px"
+        }
+      },
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons-outlined mr-2",
+            staticStyle: { "font-size": "15px", color: "#4A4A4A" }
+          },
+          [_vm._v("visibility")]
+        ),
+        _vm._v("Preview")
+      ]
+    )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", { staticStyle: { color: "#078F0C" } }, [
-      _c("i", { staticClass: "fa-li fa fa-edit" }),
-      _vm._v("Live Edit")
-    ])
+    return _c(
+      "li",
+      {
+        staticStyle: {
+          display: "flex",
+          "align-items": "center",
+          "padding-left": "10px",
+          color: "#078F0C"
+        }
+      },
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons-outlined mr-2",
+            staticStyle: { "font-size": "15px", color: "#078F0C" }
+          },
+          [_vm._v("border_color")]
+        ),
+        _vm._v("Live Edit")
+      ]
+    )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", [
-      _c("i", { staticClass: "fa-li fa fa-file" }),
-      _vm._v("Edit in Word 365")
-    ])
+    return _c(
+      "li",
+      {
+        staticStyle: {
+          display: "flex",
+          "align-items": "center",
+          "padding-left": "10px"
+        }
+      },
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons-outlined mr-2",
+            staticStyle: { "font-size": "15px", color: "#4A4A4A" }
+          },
+          [_vm._v("insert_drive_file")]
+        ),
+        _vm._v("Edit in Word 365")
+      ]
+    )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", [
-      _c("i", { staticClass: "fa-li fa fa-italic" }),
-      _vm._v("Rename")
-    ])
+    return _c(
+      "li",
+      {
+        staticStyle: {
+          display: "flex",
+          "align-items": "center",
+          "padding-left": "10px"
+        }
+      },
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons-outlined mr-2",
+            staticStyle: { "font-size": "15px", color: "#4A4A4A" }
+          },
+          [_vm._v("format_italic")]
+        ),
+        _vm._v("Rename")
+      ]
+    )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", [
-      _c("i", { staticClass: "fa-li fa fa-link" }),
-      _vm._v("Copy Link")
-    ])
+    return _c(
+      "li",
+      {
+        staticStyle: {
+          display: "flex",
+          "align-items": "center",
+          "padding-left": "10px"
+        }
+      },
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons-outlined mr-2",
+            staticStyle: { "font-size": "15px", color: "#4A4A4A" }
+          },
+          [_vm._v("link")]
+        ),
+        _vm._v("Copy Link")
+      ]
+    )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", [
-      _c("i", { staticClass: "fa-li fa fa-arrows-alt" }),
-      _vm._v("Move File")
-    ])
+    return _c(
+      "li",
+      {
+        staticStyle: {
+          display: "flex",
+          "align-items": "center",
+          "padding-left": "10px"
+        }
+      },
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons-outlined mr-2",
+            staticStyle: { "font-size": "15px", color: "#4A4A4A" }
+          },
+          [_vm._v("gamepad")]
+        ),
+        _vm._v("Move File")
+      ]
+    )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", [
-      _c("i", { staticClass: "fa-li fa fa-list-ol" }),
-      _vm._v("Start Version Control")
-    ])
+    return _c(
+      "li",
+      {
+        staticStyle: {
+          display: "flex",
+          "align-items": "center",
+          "padding-left": "10px"
+        }
+      },
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons-outlined mr-2",
+            staticStyle: { "font-size": "15px", color: "#4A4A4A" }
+          },
+          [_vm._v("format_list_numbered")]
+        ),
+        _vm._v("Start Version Control")
+      ]
+    )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", [
-      _c("i", { staticClass: "fa-li fa fa-exchange" }),
-      _vm._v("See Workflow")
-    ])
+    return _c(
+      "li",
+      {
+        staticStyle: {
+          display: "flex",
+          "align-items": "center",
+          "padding-left": "10px"
+        }
+      },
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons-outlined mr-2",
+            staticStyle: { "font-size": "15px", color: "#4A4A4A" }
+          },
+          [_vm._v("swap_horiz")]
+        ),
+        _vm._v("See Workflow")
+      ]
+    )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", { staticStyle: { "border-bottom": "1px solid #E0E0E0" } }, [
-      _c("i", { staticClass: "fa-li fa fa-share-alt" }),
-      _vm._v("Share")
-    ])
+    return _c(
+      "li",
+      {
+        staticStyle: {
+          display: "flex",
+          "align-items": "center",
+          "padding-left": "10px",
+          "border-bottom": "1px solid #E0E0E0"
+        }
+      },
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons-outlined mr-2",
+            staticStyle: { "font-size": "15px", color: "#4A4A4A" }
+          },
+          [_vm._v("share")]
+        ),
+        _vm._v("Share")
+      ]
+    )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", [
-      _c("i", { staticClass: "fa-li fa fa-info" }),
-      _vm._v("Document Info")
-    ])
+    return _c(
+      "li",
+      {
+        staticStyle: {
+          display: "flex",
+          "align-items": "center",
+          "padding-left": "10px"
+        }
+      },
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons-outlined mr-2",
+            staticStyle: { "font-size": "15px", color: "#4A4A4A" }
+          },
+          [_vm._v("info")]
+        ),
+        _vm._v("Document Info")
+      ]
+    )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", { staticStyle: { "border-bottom": "1px solid #E0E0E0" } }, [
-      _c("i", { staticClass: "fa-li fa fa-download" }),
-      _vm._v("Download")
-    ])
+    return _c(
+      "li",
+      {
+        staticStyle: {
+          display: "flex",
+          "align-items": "center",
+          "padding-left": "10px",
+          "border-bottom": "1px solid #E0E0E0"
+        }
+      },
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons-outlined mr-2",
+            staticStyle: { "font-size": "15px", color: "#4A4A4A" }
+          },
+          [_vm._v("download")]
+        ),
+        _vm._v("Download")
+      ]
+    )
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("li", { staticStyle: { color: "#E70000" } }, [
-      _c("i", { staticClass: "fa-li fa fa-trash" }),
-      _vm._v("Delete")
-    ])
+    return _c(
+      "li",
+      {
+        staticStyle: {
+          display: "flex",
+          "align-items": "center",
+          color: "#E70000",
+          "padding-left": "10px"
+        }
+      },
+      [
+        _c(
+          "span",
+          {
+            staticClass: "material-icons-outlined mr-2",
+            staticStyle: { "font-size": "15px", color: "#E70000" }
+          },
+          [_vm._v("delete")]
+        ),
+        _vm._v("Delete")
+      ]
+    )
   },
   function() {
     var _vm = this
@@ -39927,20 +42066,182 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c(
       "thead",
-      { staticStyle: { "border-bottom": "1px solid #BBBBBB !important" } },
+      {
+        staticStyle: {
+          "border-bottom": "1px solid #BBBBBB !important",
+          "font-family": "airbnb-light",
+          "font-size": "12px"
+        }
+      },
       [
         _c("tr", [
-          _c("th", { staticStyle: { width: "50%" } }, [_vm._v("Name")]),
+          _c("th", { staticStyle: { width: "50%" } }, [
+            _c(
+              "span",
+              { staticClass: "mr-2", staticStyle: { float: "left" } },
+              [_vm._v("Name")]
+            ),
+            _vm._v(" "),
+            _c("div", { staticStyle: { width: "5px" } }, [
+              _c(
+                "span",
+                {
+                  staticClass: "material-icons",
+                  staticStyle: { display: "block", "font-size": "8px" }
+                },
+                [_vm._v("keyboard_arrow_up")]
+              ),
+              _vm._v(" "),
+              _c(
+                "span",
+                {
+                  staticClass: "material-icons",
+                  staticStyle: { display: "block", "font-size": "8px" }
+                },
+                [_vm._v("keyboard_arrow_down")]
+              )
+            ])
+          ]),
           _vm._v(" "),
-          _c("th", { staticStyle: { width: "10%" } }, [_vm._v("Doc No")]),
+          _c("th", { staticStyle: { width: "10%" } }, [
+            _c(
+              "span",
+              { staticClass: "mr-2", staticStyle: { float: "left" } },
+              [_vm._v("Doc No")]
+            ),
+            _vm._v(" "),
+            _c("div", { staticStyle: { width: "5px" } }, [
+              _c(
+                "span",
+                {
+                  staticClass: "material-icons",
+                  staticStyle: { display: "block", "font-size": "8px" }
+                },
+                [_vm._v("keyboard_arrow_up")]
+              ),
+              _vm._v(" "),
+              _c(
+                "span",
+                {
+                  staticClass: "material-icons",
+                  staticStyle: { display: "block", "font-size": "8px" }
+                },
+                [_vm._v("keyboard_arrow_down")]
+              )
+            ])
+          ]),
           _vm._v(" "),
-          _c("th", { staticStyle: { width: "10%" } }, [_vm._v("Size")]),
+          _c("th", { staticStyle: { width: "10%" } }, [
+            _c(
+              "span",
+              { staticClass: "mr-2", staticStyle: { float: "left" } },
+              [_vm._v("Size")]
+            ),
+            _vm._v(" "),
+            _c("div", { staticStyle: { width: "5px" } }, [
+              _c(
+                "span",
+                {
+                  staticClass: "material-icons",
+                  staticStyle: { display: "block", "font-size": "8px" }
+                },
+                [_vm._v("keyboard_arrow_up")]
+              ),
+              _vm._v(" "),
+              _c(
+                "span",
+                {
+                  staticClass: "material-icons",
+                  staticStyle: { display: "block", "font-size": "8px" }
+                },
+                [_vm._v("keyboard_arrow_down")]
+              )
+            ])
+          ]),
           _vm._v(" "),
-          _c("th", { staticStyle: { width: "10%" } }, [_vm._v("Status")]),
+          _c("th", { staticStyle: { width: "10%" } }, [
+            _c(
+              "span",
+              { staticClass: "mr-2", staticStyle: { float: "left" } },
+              [_vm._v("Status")]
+            ),
+            _vm._v(" "),
+            _c("div", { staticStyle: { width: "5px" } }, [
+              _c(
+                "span",
+                {
+                  staticClass: "material-icons",
+                  staticStyle: { display: "block", "font-size": "8px" }
+                },
+                [_vm._v("keyboard_arrow_up")]
+              ),
+              _vm._v(" "),
+              _c(
+                "span",
+                {
+                  staticClass: "material-icons",
+                  staticStyle: { display: "block", "font-size": "8px" }
+                },
+                [_vm._v("keyboard_arrow_down")]
+              )
+            ])
+          ]),
           _vm._v(" "),
-          _c("th", { staticStyle: { width: "10%" } }, [_vm._v("Upload Date")]),
+          _c("th", { staticStyle: { width: "10%" } }, [
+            _c(
+              "span",
+              { staticClass: "mr-2", staticStyle: { float: "left" } },
+              [_vm._v("Upload Date")]
+            ),
+            _vm._v(" "),
+            _c("div", { staticStyle: { width: "5px" } }, [
+              _c(
+                "span",
+                {
+                  staticClass: "material-icons",
+                  staticStyle: { display: "block", "font-size": "8px" }
+                },
+                [_vm._v("keyboard_arrow_up")]
+              ),
+              _vm._v(" "),
+              _c(
+                "span",
+                {
+                  staticClass: "material-icons",
+                  staticStyle: { display: "block", "font-size": "8px" }
+                },
+                [_vm._v("keyboard_arrow_down")]
+              )
+            ])
+          ]),
           _vm._v(" "),
-          _c("th", { staticStyle: { width: "10%" } }, [_vm._v("Last Updated")])
+          _c("th", { staticStyle: { width: "10%" } }, [
+            _c(
+              "span",
+              { staticClass: "mr-2", staticStyle: { float: "left" } },
+              [_vm._v("Last Updated")]
+            ),
+            _vm._v(" "),
+            _c("div", { staticStyle: { width: "5px" } }, [
+              _c(
+                "span",
+                {
+                  staticClass: "material-icons",
+                  staticStyle: { display: "block", "font-size": "8px" }
+                },
+                [_vm._v("keyboard_arrow_up")]
+              ),
+              _vm._v(" "),
+              _c(
+                "span",
+                {
+                  staticClass: "material-icons",
+                  staticStyle: { display: "block", "font-size": "8px" }
+                },
+                [_vm._v("keyboard_arrow_down")]
+              )
+            ])
+          ])
         ])
       ]
     )
@@ -39951,7 +42252,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "columnM" }, [
       _c("img", {
-        staticStyle: { width: "30px" },
+        staticStyle: { width: "20px" },
         attrs: { src: "img/folder.png" }
       })
     ])
@@ -55714,9 +58015,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Home_vue_vue_type_template_id_f2b6376c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Home.vue?vue&type=template&id=f2b6376c& */ "./resources/js/components/Home.vue?vue&type=template&id=f2b6376c&");
 /* harmony import */ var _Home_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Home.vue?vue&type=script&lang=js& */ "./resources/js/components/Home.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _Home_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Home.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/Home.vue?vue&type=style&index=0&lang=css&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -55724,7 +58023,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _Home_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _Home_vue_vue_type_template_id_f2b6376c___WEBPACK_IMPORTED_MODULE_0__["render"],
   _Home_vue_vue_type_template_id_f2b6376c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
@@ -55753,22 +58052,6 @@ component.options.__file = "resources/js/components/Home.vue"
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Home.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Home.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/Home.vue?vue&type=style&index=0&lang=css&":
-/*!***************************************************************************!*\
-  !*** ./resources/js/components/Home.vue?vue&type=style&index=0&lang=css& ***!
-  \***************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./Home.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Home.vue?vue&type=style&index=0&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
 
 /***/ }),
 

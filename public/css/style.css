@@ -1,6 +1,63 @@
 /*
     DEMO STYLE
 */
+ul, #myUL {
+    list-style-type: none;
+  }
+  
+  #myUL {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  .over {
+    background-color: #E7F3FF;
+    color: #1890FF
+  }
+
+  .expand:hover {
+    background-color: #E7F3FF;
+    color: #1890FF
+  }
+
+#myUL li:hover{
+    border: none !important;
+    border-radius: 0;
+}
+  .caret {
+    cursor: pointer;
+    -webkit-user-select: none; /* Safari 3.1+ */
+    -moz-user-select: none; /* Firefox 2+ */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none;
+  }
+  
+  /* .caret-down{
+    background-color: #E7F3FF;
+  } */
+
+  .caret::before {
+    content: url('../img/arrow2.png');
+    color: black;
+    display: inline-block;
+    margin-right: 6px;
+  }
+  
+  .caret-down::before {
+    -ms-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);  
+  }
+  
+  .nested {
+    display: none;
+  }
+  
+  .activet {
+    display: block;
+  }
+
 
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
 body {
